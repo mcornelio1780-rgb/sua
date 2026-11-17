@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>sua · Make your AI yours</title>
+<meta name="description" content="AI Ownership Audit: measure what your AI costs, build your own evals and test open models against your current provider in 5 days.">
+<meta property="og:title" content="sua · Make your AI yours">
+<meta property="og:description" content="Stop renting intelligence. 5-day AI Ownership Audit.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/assets/og.png">
+<link rel="apple-touch-icon" href="/assets/sua-avatar-1080.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-19%203%2048%2042%22%3E%3Crect%20x%3D%22-19%22%20y%3D%223%22%20width%3D%2248%22%20height%3D%2242%22%20rx%3D%228%22%20fill%3D%22%231B2CC1%22/%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23EEF0F3%22%20stroke-width%3D%228%22%3E%3Cpath%20d%3D%22M-12%2024%20A12%2012%200%201%200%2012%2024%20A12%2012%200%201%200%20-12%2024%20M12%208%20V40%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23EEF0F3%22%3E%3Cpath%20d%3D%22M15.5%2034%20h5.5%20v-6%20h5%20v12%20h-10.5%20z%22/%3E%3C/g%3E%3C/svg%3E">
+<link rel="alternate" hreflang="es" href="/?lang=es"><link rel="alternate" hreflang="en" href="/?lang=en"><link rel="alternate" hreflang="pt" href="/?lang=pt"><link rel="alternate" hreflang="fr" href="/?lang=fr">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#1B2CC1;--tinta-900:#0E1546;--papel:#EEF0F3;--grafito:#1D1F24;--gris:#5B6170;--niebla:#C9CEDA;--laton:#C9A227;--ahorro:#1F9D5C;--alquiler:#E5484D;
+  --bg:var(--papel);--fg:var(--grafito);--muted:var(--gris);--line:var(--niebla);--surface:#FFFFFF;--brand:var(--tinta);--brand-fg:#FFFFFF;--receipt:#FFFFFF;
+  --sans:"Archivo","Helvetica Neue",Arial,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1030;--fg:#EEF0F3;--muted:#A9B0C4;--line:#2A3263;--surface:#121A45;--brand:#8C97FF;--brand-fg:#0B1030;--receipt:#F4F5F8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1030;--fg:#EEF0F3;--muted:#A9B0C4;--line:#2A3263;--surface:#121A45;--brand:#8C97FF;--brand-fg:#0B1030;--receipt:#F4F5F8;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:18px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+svg.logo{display:block;width:100%;height:auto}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--laton);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,5vw,56px)}
+.skip{position:absolute;left:-999px;top:8px;background:var(--surface);padding:8px 12px;z-index:99}.skip:focus{left:8px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:24px;height:68px}
+header.top .brand{width:78px;color:var(--brand)}
+header.top nav{display:flex;gap:22px;margin-left:12px}
+header.top nav a{text-decoration:none;font-size:15.5px;color:var(--muted)}
+header.top nav a:hover{color:var(--fg)}
+.spacer{flex:1}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.lang button{font:inherit;font-size:13.5px;font-weight:600;border:0;background:transparent;color:var(--muted);padding:5px 9px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:600;font-size:16px;text-decoration:none;border-radius:999px;padding:13px 22px;border:1.5px solid transparent;cursor:pointer;transition:transform .15s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brand);color:var(--brand-fg)}
+.btn.ghost{border-color:var(--fg);color:var(--fg);background:transparent}
+.btn.sm{padding:9px 16px;font-size:14.5px}
+.menu-btn{display:none}
+@media (max-width:900px){header.top nav{display:none}header.top .cta-top{display:none}}
+@media (max-width:520px){.lang button{padding:5px 7px}}
+
+/* HERO */
+.hero{padding:clamp(48px,8vw,104px) 0 72px}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,5vw,72px);align-items:center}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}}
+h1{font-size:clamp(44px,7.2vw,96px);line-height:.95;letter-spacing:-.02em;font-weight:750;font-variation-settings:"wdth" 125;margin:0 0 26px;color:var(--brand)}
+.hero p.sub{font-size:clamp(18px,1.7vw,22px);max-width:34ch;margin:0 0 32px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.hero .note{margin-top:18px;font-size:14.5px;color:var(--muted)}
+.receipt{position:relative;background:var(--receipt);color:#1D1F24;border-radius:3px;padding:26px 24px 30px;font-family:var(--mono);font-size:13.5px;box-shadow:0 30px 60px -30px rgba(14,21,70,.45);max-width:420px;justify-self:center;width:100%;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 10px) no-repeat,radial-gradient(circle 6px at 8px 100%,transparent 98%,#000) bottom/16px 10px repeat-x;
+  mask:linear-gradient(#000 0 0) top/100% calc(100% - 10px) no-repeat,radial-gradient(circle 6px at 8px 100%,transparent 98%,#000) bottom/16px 10px repeat-x}
+.receipt h4{font-family:var(--sans);font-size:15px;margin:0 0 4px;font-weight:700}
+.receipt .meta{color:#5B6170;font-size:12px;margin-bottom:16px}
+.receipt .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed #C9CEDA;opacity:0;transform:translateY(4px);animation:line .35s ease forwards}
+.receipt .row span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.receipt .total{display:flex;justify-content:space-between;padding:12px 0 4px;font-weight:600;font-size:15px;opacity:0;animation:line .35s ease forwards;animation-delay:1.5s}
+.receipt .own{display:flex;justify-content:space-between;color:#1F9D5C;font-weight:600;opacity:0;animation:line .35s ease forwards;animation-delay:2.5s}
+.stamp{position:absolute;right:18px;bottom:54px;width:132px;height:132px;border:5px solid #1B2CC1;border-radius:50%;color:#1B2CC1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transform:rotate(-12deg) scale(1.6);opacity:0;animation:stamp .28s cubic-bezier(.2,.9,.3,1.3) forwards;animation-delay:2.05s;mix-blend-mode:multiply;font-family:var(--sans);text-align:center;font-size:11px;font-weight:700;line-height:1.1}
+.stamp .m{width:34px}
+@keyframes line{to{opacity:1;transform:none}}
+@keyframes stamp{to{opacity:.9;transform:rotate(-12deg) scale(1)}}
+
+section{padding:clamp(64px,9vw,120px) 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(34px,4.6vw,60px);line-height:1;letter-spacing:-.015em;font-weight:720;font-variation-settings:"wdth" 122;margin:0 0 18px;max-width:18ch}
+.intro{font-size:20px;max-width:56ch;color:var(--muted);margin:0 0 44px}
+
+
+/* why / stats */
+.why-lead{font-size:clamp(20px,2vw,26px);max-width:44ch;line-height:1.35;margin:0 0 40px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--fg)}
+.stat{padding:26px 24px 28px 0;border-bottom:1px solid var(--line)}
+.stat:not(:nth-child(3n)){border-right:1px solid var(--line)}
+.stat:not(:nth-child(3n+1)){padding-left:24px}
+.stat b{display:block;font-size:clamp(34px,4vw,52px);line-height:1;font-weight:750;font-variation-settings:"wdth" 122;color:var(--brand);margin-bottom:12px;font-variant-numeric:tabular-nums}
+.stat p{margin:0 0 10px;font-size:16.5px}
+.stat a{font-size:13.5px;color:var(--muted)}
+@media (max-width:900px){.stats{grid-template-columns:1fr}.stat,.stat:not(:nth-child(3n+1)){padding:22px 0;border-right:0!important}}
+.solve{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.solve div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:22px}
+.solve div:last-child{border:2px solid var(--brand)}
+.solve small{display:block;font-weight:700;color:var(--brand);margin-bottom:6px;font-size:14px}
+.solve h3{margin:0 0 8px;font-size:20px;line-height:1.2}
+.solve p{margin:0;color:var(--muted);font-size:16px}
+@media (max-width:900px){.solve{grid-template-columns:1fr}}
+
+/* clauses */
+.clauses{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--fg)}
+.clause{padding:26px 26px 30px 0;border-right:1px solid var(--line)}
+.clause+.clause{padding-left:26px}.clause:last-child{border-right:0}
+.clause .k{font-family:var(--mono);font-size:13px;color:var(--alquiler);margin-bottom:12px}
+.clause h3{font-size:22px;line-height:1.15;margin:0 0 10px;font-variation-settings:"wdth" 110}
+.clause p{margin:0;color:var(--muted);font-size:16.5px}
+@media (max-width:900px){.clauses{grid-template-columns:1fr}.clause,.clause+.clause{padding:22px 0;border-right:0;border-bottom:1px solid var(--line)}}
+
+/* timeline */
+.days{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:d}
+.days li{position:relative;padding:0 18px 0 0}
+.days .bar{height:var(--h);background:var(--brand);margin-bottom:18px}
+.days .col{display:flex;flex-direction:column;justify-content:flex-end;height:150px}
+.days strong{display:block;font-size:14px;color:var(--brand);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.days h3{font-size:20px;margin:0 0 6px;font-variation-settings:"wdth" 108;line-height:1.15}
+.days p{margin:0;font-size:15.5px;color:var(--muted)}
+@media (max-width:900px){.days{grid-template-columns:1fr;gap:22px}.days .col{height:auto}.days .bar{height:8px;width:var(--w)}}
+
+.deliver{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:56px}
+.deliver div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px}
+.deliver h3{margin:0 0 6px;font-size:19px}
+.deliver p{margin:0;color:var(--muted);font-size:16px}
+@media (max-width:700px){.deliver{grid-template-columns:1fr}}
+
+/* demo band */
+.band{background:var(--tinta);color:#EEF0F3;border-top:0}
+.band .wrap{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center}
+.band h2{color:#EEF0F3}
+.band p{color:#CFD4FA;max-width:52ch;margin:0}
+.band .btn{background:#EEF0F3;color:#1B2CC1}
+@media (max-width:800px){.band .wrap{grid-template-columns:1fr}}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.plan.feat{border:2px solid var(--brand);position:relative}
+.plan .flag{position:absolute;top:-13px;left:20px;background:var(--laton);color:#1D1F24;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px}
+.plan h3{margin:0;font-size:19px}
+.plan .price{font-size:40px;font-weight:750;font-variation-settings:"wdth" 120;line-height:1;color:var(--brand)}
+.plan .price small{font-size:15px;color:var(--muted);font-weight:500}
+.plan .was{font-size:14px;color:var(--muted)}
+.plan ul{margin:0;padding-left:18px;font-size:15.5px;color:var(--muted);flex:1}
+.plan li{margin:4px 0}
+.plan .btn{width:100%}
+@media (max-width:1050px){.plans{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.plans{grid-template-columns:1fr}}
+.fine{font-size:14px;color:var(--muted);margin-top:18px}
+
+/* case */
+.case{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,64px);align-items:start}
+.case .ring{width:min(260px,70vw);aspect-ratio:1;border:40px solid var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.case .ring b{font-size:44px;font-variation-settings:"wdth" 125;line-height:1}
+.case .ring span{font-size:13.5px;color:var(--muted);max-width:12ch}
+@media (max-width:800px){.case{grid-template-columns:1fr}}
+
+/* faq */
+.faq details{border-bottom:1px solid var(--line);padding:18px 0}
+.faq summary{cursor:pointer;font-size:20px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:400;color:var(--brand);font-size:26px;line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq p{margin:12px 0 0;max-width:70ch;color:var(--muted)}
+
+/* form */
+.contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(24px,5vw,64px)}
+form.lead{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+form.lead .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:6px;font-size:14.5px;font-weight:600}
+input,select,textarea{font:inherit;font-weight:400;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);outline:none}
+.err{color:var(--alquiler);font-size:13.5px;font-weight:500;min-height:1em}
+.status{grid-column:1/-1;font-size:15px;min-height:1.4em}
+.consent{flex-direction:row;align-items:flex-start;gap:10px;font-weight:400;font-size:14px;color:var(--muted)}
+.consent input{margin-top:4px}
+@media (max-width:800px){.contact{grid-template-columns:1fr}form.lead{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding:48px 0 64px;font-size:14.5px;color:var(--muted)}
+footer .wrap{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}
+footer .fl{width:120px;color:var(--brand);margin-bottom:12px}
+footer nav{display:flex;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Saltar al contenido</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="sua"><svg class="logo" viewBox="-1 6 110 36" role="img" aria-label="sua"><title>sua</title><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="butt"><path d="M20.84 15.75 A9 6 0 1 0 12.50 24.00 A9 6 0 1 1 4.16 32.25"/><path d="M35 8 V26 A10 10 0 0 0 55 26 M55 8 V40"/><path d="M69 24 A12 12 0 1 0 93 24 A12 12 0 1 0 69 24 M93 8 V40"/></g><g fill="currentColor"><path d="M96.5 34 h5.5 v-6 h5 v12 h-10.5 z"/></g></svg></a>
+    <nav aria-label="Principal">
+      <a href="#why" data-i18n="nav_why">Qué resolvemos</a>
+      <a href="#how" data-i18n="nav_how">Cómo funciona</a>
+      <a href="#pricing" data-i18n="nav_pricing">Precios</a>
+      <a href="#faq" data-i18n="nav_faq">Preguntas</a>
+      <a href="/app" data-i18n="nav_app">Probar el auditor</a>
+    </nav>
+    <span class="spacer"></span>
+    <div class="lang" role="group" aria-label="Idioma / Language">
+      <button type="button" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+    </div>
+    <a class="btn primary sm cta-top" href="#contact" data-i18n="cta_measure">Medir mi IA</a>
+  </div>
+</header>
+
+<main id="main">
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <h1 data-i18n="h1">Deja de alquilar tu inteligencia.</h1>
+      <p class="sub" data-i18n="hero_sub">En 5 días medimos cuánto te cuesta tu IA, construimos tus evaluaciones con casos reales y probamos modelos abiertos contra tu proveedor actual.</p>
+      <div class="ctas">
+        <a class="btn primary" data-plan="audit" href="#pricing" data-i18n="cta_book">Reservar auditoría · $249</a>
+        <a class="btn ghost" href="/app" data-i18n="cta_try">Calcular mi gasto gratis</a>
+      </div>
+      <p class="note" data-i18n="hero_note">Precio fundador para las primeras 5 empresas. Entrega digital en 5 días hábiles.</p>
+    </div>
+    <div class="receipt" aria-label="Ejemplo de factura de IA" role="img">
+      <h4 data-i18n="r_title">Factura de IA · octubre</h4>
+      <div class="meta" data-i18n="r_meta">Ejemplo ilustrativo de una startup Serie A</div>
+      <div class="row" style="animation-delay:.2s"><span data-i18n="r_l1">Soporte al cliente</span><span>$2,140</span></div>
+      <div class="row" style="animation-delay:.45s"><span data-i18n="r_l2">Clasificación de tickets</span><span>$910</span></div>
+      <div class="row" style="animation-delay:.7s"><span data-i18n="r_l3">Resúmenes de llamadas</span><span>$760</span></div>
+      <div class="row" style="animation-delay:.95s"><span data-i18n="r_l4">Extracción de facturas</span><span>$390</span></div>
+      <div class="total"><span data-i18n="r_total">Total alquilado</span><span>$4,200</span></div>
+      <div class="own"><span data-i18n="r_own">Tuyo</span><span>$0</span></div>
+      <div class="stamp" aria-hidden="true"><span class="m"><svg class="logo" viewBox="-19 3 48 42" role="img" aria-label="sua"><title>sua</title><g fill="none" stroke="currentColor" stroke-width="8"><path d="M-12 24 A12 12 0 1 0 12 24 A12 12 0 1 0 -12 24 M12 8 V40"/></g><g fill="currentColor"><path d="M15.5 34 h5.5 v-6 h5 v12 h-10.5 z"/></g></svg></span><span data-i18n="r_stamp">MEDIDO</span></div>
+    </div>
+  </div>
+</div>
+
+<section id="why">
+  <div class="wrap">
+    <h2 data-i18n="w_h">Qué resolvemos</h2>
+    <p class="why-lead" data-i18n="w_lead">Las empresas gastan cada vez más en IA que no miden ni controlan. Al mismo tiempo, modelos más pequeños y propios ya ganan en tareas concretas. sua conecta las dos cosas: medimos tu IA con tus propios casos para que decidas con datos qué seguir alquilando y qué poseer.</p>
+    <div class="stats">
+      <div class="stat"><b>$37B</b><p data-i18n="st1">Gasto empresarial en IA generativa en 2025, 3,2 veces más que en 2024.</p><a href="https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/" target="_blank" rel="noopener">Menlo Ventures, 2025</a></div>
+      <div class="stat"><b>51%</b><p data-i18n="st2">Solo la mitad de las empresas puede evaluar con confianza el retorno de lo que gasta en IA.</p><a href="https://www.cloudzero.com/state-of-ai-costs/" target="_blank" rel="noopener">CloudZero, State of AI Costs 2025</a></div>
+      <div class="stat"><b>95%</b><p data-i18n="st3">De las organizaciones no logró un impacto medible en resultados con sus proyectos de IA generativa.</p><a href="https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/" target="_blank" rel="noopener">MIT NANDA, The GenAI Divide 2025</a></div>
+      <div class="stat"><b>52% → 10%</b><p data-i18n="st4">Código ejecutable de GPT-4 entre marzo y junio de 2023: el mismo modelo cambió sin aviso.</p><a href="https://arxiv.org/abs/2307.09009" target="_blank" rel="noopener">Stanford &amp; UC Berkeley, 2023</a></div>
+      <div class="stat"><b>+10 pts</b><p data-i18n="st5">Ventaja promedio de modelos pequeños afinados sobre GPT-4 en 31 tareas concretas.</p><a href="https://arxiv.org/abs/2405.00732" target="_blank" rel="noopener">Predibase, LoRA Land 2024</a></div>
+      <div class="stat"><b>3×</b><p data-i18n="st6">Para 2027 las empresas usarán modelos pequeños y específicos tres veces más que los modelos generales.</p><a href="https://www.gartner.com/en/newsroom/press-releases/2025-04-09-gartner-predicts-by-2027-organizations-will-use-small-task-specific-ai-models-three-times-more-than-general-purpose-large-language-models" target="_blank" rel="noopener">Gartner, 2025</a></div>
+    </div>
+    <div class="solve">
+      <div><small data-i18n="sv1_k">Hoy</small><h3 data-i18n="sv1_h">Pagas sin medir</h3><p data-i18n="sv1_p">No sabes cuánto cuesta cada tarea, qué tan bien responde tu IA ni qué pasa cuando el proveedor cambia el modelo.</p></div>
+      <div><small data-i18n="sv2_k">Lo que hacemos</small><h3 data-i18n="sv2_h">Medimos con tus casos</h3><p data-i18n="sv2_p">Convertimos tus casos reales en evaluaciones y probamos modelos abiertos contra tu proveedor, tarea por tarea.</p></div>
+      <div><small data-i18n="sv3_k">Resultado</small><h3 data-i18n="sv3_h">Decides con datos</h3><p data-i18n="sv3_p">Sabes qué flujos conviene poseer, cuánto ahorras y te quedas con las evaluaciones para siempre.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <h2 data-i18n="p_h">Lo que firmas cuando alquilas tu IA</h2>
+    <p class="intro" data-i18n="p_intro">Nadie lo lee, pero cada llamada a una API trae estas tres cláusulas.</p>
+    <div class="clauses">
+      <div class="clause"><div class="k" data-i18n="c1_k">Cláusula 1</div><h3 data-i18n="c1_h">El modelo puede cambiar sin aviso.</h3><p data-i18n="c1_p">Una actualización del proveedor y tus prompts dejan de dar el mismo resultado. Sin evaluaciones propias, te enteras por tus clientes.</p></div>
+      <div class="clause"><div class="k" data-i18n="c2_k">Cláusula 2</div><h3 data-i18n="c2_h">Pagas más cada vez que creces.</h3><p data-i18n="c2_p">El gasto en tokens sube con tus usuarios. Muchas tareas repetitivas funcionarían con un modelo más pequeño y propio.</p></div>
+      <div class="clause"><div class="k" data-i18n="c3_k">Cláusula 3</div><h3 data-i18n="c3_h">Tu conocimiento se queda afuera.</h3><p data-i18n="c3_p">El criterio de tus expertos nunca se convierte en datos. El modelo que usas no aprende nada de tu negocio.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 data-i18n="h_h">La auditoría, día por día</h2>
+    <p class="intro" data-i18n="h_intro">Cada día sube un diente de tu llave: al quinto sabes exactamente qué te conviene poseer.</p>
+    <ol class="days">
+      <li><div class="col"><div class="bar" style="--h:20%;--w:20%"></div></div><strong data-i18n="d1_n">Día 1</strong><h3 data-i18n="d1_h">Inventario</h3><p data-i18n="d1_p">Mapeamos cada uso de IA, proveedor, modelo y gasto mensual.</p></li>
+      <li><div class="col"><div class="bar" style="--h:38%;--w:38%"></div></div><strong data-i18n="d2_n">Día 2</strong><h3 data-i18n="d2_h">Tus evaluaciones</h3><p data-i18n="d2_p">Convertimos 100 casos reales en un set de evaluaciones con rúbricas.</p></li>
+      <li><div class="col"><div class="bar" style="--h:58%;--w:58%"></div></div><strong data-i18n="d3_n">Día 3</strong><h3 data-i18n="d3_h">Benchmark</h3><p data-i18n="d3_p">Probamos 3 modelos abiertos contra tu proveedor con tus propios casos.</p></li>
+      <li><div class="col"><div class="bar" style="--h:78%;--w:78%"></div></div><strong data-i18n="d4_n">Día 4</strong><h3 data-i18n="d4_h">Costos y ahorro</h3><p data-i18n="d4_p">Costo por tarea hoy vs. modelo propio, con calidad medida.</p></li>
+      <li><div class="col"><div class="bar" style="--h:100%;--w:100%;background:var(--laton)"></div></div><strong data-i18n="d5_n">Día 5</strong><h3 data-i18n="d5_h">Reporte y llaves</h3><p data-i18n="d5_p">Te entregamos el reporte, el repositorio de evaluaciones y la hoja de ruta.</p></li>
+    </ol>
+    <div class="deliver">
+      <div><h3 data-i18n="dl1_h">Reporte ejecutivo</h3><p data-i18n="dl1_p">Gasto, calidad y riesgo de cada flujo, explicado para fundadores y para el equipo técnico.</p></div>
+      <div><h3 data-i18n="dl2_h">Repositorio de evaluaciones</h3><p data-i18n="dl2_p">Tus casos, rúbricas y scripts. Es tuyo: sirve para medir cualquier modelo, hoy y mañana.</p></div>
+      <div><h3 data-i18n="dl3_h">Modelo de ahorro</h3><p data-i18n="dl3_p">Proyección a 12 meses del costo actual vs. modelo abierto o afinado.</p></div>
+      <div><h3 data-i18n="dl4_h">Hoja de ruta de propiedad</h3><p data-i18n="dl4_p">Qué flujos migrar primero, cuáles no tocar y qué necesitas para lograrlo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="demo">
+  <div class="wrap">
+    <div><h2 data-i18n="b_h">Prueba el auditor antes de pagar</h2><p data-i18n="b_p">Carga tus flujos de IA, compara costos con precios en vivo de modelos abiertos y arma tus primeras evaluaciones. Gratis, en tu navegador.</p></div>
+    <a class="btn" href="/app" data-i18n="b_cta">Abrir el auditor</a>
+  </div>
+</section>
+
+<section id="case">
+  <div class="wrap case">
+    <div>
+      <h2 data-i18n="k_h">Empezamos auditándonos a nosotros</h2>
+      <p class="intro" style="margin-bottom:20px" data-i18n="k_p">Nuestro primer caso es nuestra propia operación: cada agente que usamos para vender, escribir y atender pasa por la misma auditoría que te ofrecemos. Publicamos el método completo y los números en nuestro newsletter.</p>
+      <a class="btn ghost" data-link="substack" href="#" data-i18n="k_cta">Leer el caso en Substack</a>
+    </div>
+    <div class="ring" role="img" aria-label="100 evaluaciones"><b>100</b><span data-i18n="k_ring">evaluaciones propias por auditoría</span></div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2 data-i18n="pr_h">Empieza midiendo. Decide después.</h2>
+    <p class="intro" data-i18n="pr_intro">Precios en USD. El pago se procesa de forma segura y recibes factura automática.</p>
+    <div class="plans">
+      <div class="plan"><h3 data-i18n="pl1_h">Evals Pack</h3><div class="price">$99</div><ul><li data-i18n="pl1_a">Plantilla y metodología para crear tus evaluaciones</li><li data-i18n="pl1_b">Rúbricas de ejemplo por tipo de tarea</li><li data-i18n="pl1_c">Guía en ES, EN, PT y FR</li></ul><a class="btn ghost" data-plan="evals" href="#" data-i18n="pl1_cta">Comprar Evals Pack</a></div>
+      <div class="plan feat"><span class="flag" data-i18n="pl2_flag">5 cupos fundador</span><h3 data-i18n="pl2_h">AI Ownership Audit</h3><div class="price">$249</div><div class="was" data-i18n="pl2_was">Luego $490</div><ul><li data-i18n="pl2_a">Inventario de gasto e IA</li><li data-i18n="pl2_b">100 evaluaciones con tus casos</li><li data-i18n="pl2_c">3 modelos abiertos vs. tu proveedor</li><li data-i18n="pl2_d">Reporte y repositorio en 5 días</li></ul><a class="btn primary" data-plan="audit" href="#" data-i18n="pl2_cta">Reservar auditoría</a></div>
+      <div class="plan"><h3 data-i18n="pl3_h">Programa de afinado</h3><div class="price"><small data-i18n="from">desde</small> $3k</div><ul><li data-i18n="pl3_a">Modelo abierto afinado con tus datos</li><li data-i18n="pl3_b">Despliegue y plan de reversa</li><li data-i18n="pl3_c">Los pesos son tuyos por contrato</li></ul><a class="btn ghost" data-plan="program" href="#contact" data-i18n="pl3_cta">Agendar llamada</a></div>
+      <div class="plan"><h3 data-i18n="pl4_h">sua Continuo</h3><div class="price"><small data-i18n="from">desde</small> $500<small data-i18n="per_month">/mes</small></div><ul><li data-i18n="pl4_a">Re-evaluación mensual</li><li data-i18n="pl4_b">Alertas cuando un modelo cambia</li><li data-i18n="pl4_c">Mejora continua del modelo propio</li></ul><a class="btn ghost" data-plan="continuo" href="#contact" data-i18n="pl4_cta">Hablar con nosotros</a></div>
+    </div>
+    <p class="fine" data-i18n="pr_fine">Pagos procesados por Polar como Merchant of Record: impuestos y factura incluidos. Si en la auditoría no encontramos ahorro ni mejora medible, te devolvemos el 100 %.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap faq">
+    <h2 data-i18n="f_h">Preguntas frecuentes</h2>
+    <details><summary data-i18n="q1">¿Qué datos necesitan?</summary><p data-i18n="a1">Ejemplos reales de entradas y salidas de tus flujos de IA (pueden ir anonimizados) y tu factura de API. Firmamos acuerdo de confidencialidad antes de recibir nada.</p></details>
+    <details><summary data-i18n="q2">¿Mis datos salen de mi empresa?</summary><p data-i18n="a2">Solo lo que tú autorices. Podemos correr las evaluaciones en tu propia nube o con datos sintéticos que imitan los tuyos.</p></details>
+    <details><summary data-i18n="q3">¿Qué pasa si el modelo abierto pierde?</summary><p data-i18n="a3">Te lo decimos con los números. Igual te quedas con tus evaluaciones, que te sirven para negociar con tu proveedor y detectar cambios de calidad.</p></details>
+    <details><summary data-i18n="q4">¿Qué modelos prueban?</summary><p data-i18n="a4">Elegimos según tu tarea, idioma y licencia comercial entre las familias abiertas líderes del momento, y revisamos la licencia de cada una antes de recomendarla.</p></details>
+    <details><summary data-i18n="q5">¿Trabajan en mi idioma y país?</summary><p data-i18n="a5">Sí: español, inglés, portugués y francés. Trabajamos 100 % remoto con empresas de cualquier país.</p></details>
+    <details><summary data-i18n="q6">¿Cómo facturan?</summary><p data-i18n="a6">Cobramos a través de Polar, que emite la factura y gestiona impuestos según tu país. Aceptamos tarjetas internacionales.</p></details>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap contact">
+    <div>
+      <h2 data-i18n="ct_h">Mide tu IA esta semana</h2>
+      <p class="intro" data-i18n="ct_p">Déjanos tus datos y te respondemos en menos de 24 horas con los próximos pasos. O agenda directamente 15 minutos.</p>
+      <a class="btn ghost" data-link="cal" href="#" data-i18n="ct_cal">Agendar 15 minutos</a>
+    </div>
+    <form class="lead" id="leadForm" novalidate>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <label><span data-i18n="fm_name">Nombre</span><input name="name" autocomplete="name" required><span class="err" data-err="name"></span></label>
+      <label><span data-i18n="fm_email">Correo de trabajo</span><input name="email" type="email" autocomplete="email" required><span class="err" data-err="email"></span></label>
+      <label><span data-i18n="fm_company">Empresa</span><input name="company" autocomplete="organization"></label>
+      <label><span data-i18n="fm_country">País</span><input name="country" autocomplete="country-name"></label>
+      <label class="full"><span data-i18n="fm_spend">Gasto mensual aproximado en IA</span>
+        <select name="spend"><option value="" data-i18n="fm_choose">Elige un rango</option><option>&lt; $500</option><option>$500 – $2,000</option><option>$2,000 – $10,000</option><option>$10,000 – $50,000</option><option>&gt; $50,000</option></select></label>
+      <label class="full"><span data-i18n="fm_msg">¿Qué usa IA hoy en tu empresa?</span><textarea name="message" rows="3"></textarea></label>
+      <label class="consent full"><input type="checkbox" name="consent" required><span data-i18n="fm_consent">Acepto que sua me contacte sobre esta solicitud. Puedo darme de baja cuando quiera.</span></label>
+      <span class="err full" data-err="consent"></span>
+      <button class="btn primary full" type="submit" data-i18n="fm_send">Enviar solicitud</button>
+      <div class="status" id="formStatus" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><div class="fl"><svg class="logo" viewBox="-1 6 110 36" role="img" aria-label="sua"><title>sua</title><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="butt"><path d="M20.84 15.75 A9 6 0 1 0 12.50 24.00 A9 6 0 1 1 4.16 32.25"/><path d="M35 8 V26 A10 10 0 0 0 55 26 M55 8 V40"/><path d="M69 24 A12 12 0 1 0 93 24 A12 12 0 1 0 69 24 M93 8 V40"/></g><g fill="currentColor"><path d="M96.5 34 h5.5 v-6 h5 v12 h-10.5 z"/></g></svg></div><span data-i18n="ft_tag">Make your AI yours.</span><br><span data-i18n="ft_llc">sua es una marca operada por una LLC registrada en EE. UU.</span></div>
+    <nav aria-label="Legal"><a href="/legal#terminos" data-legal data-i18n="ft_terms">Términos</a><a href="/legal#privacidad" data-legal data-i18n="ft_privacy">Privacidad</a><a data-link="email" href="#">manyosa@limly.io</a></nav>
+  </div>
+</footer>
+
+<script src="/config.js"></script>
+<script>
+var CONFIG = window.SUA_CONFIG || {email:"manyosa@limly.io",polar:{},leads:{provider:"email"}};
+CONFIG.polar=CONFIG.polar||{};CONFIG.leads=CONFIG.leads||{provider:"email"};
+
+var I18N = {
+es:{nav_why:"Qué resolvemos",w_h:"Qué resolvemos",w_lead:"Las empresas gastan cada vez más en IA que no miden ni controlan. Al mismo tiempo, modelos más pequeños y propios ya ganan en tareas concretas. sua conecta las dos cosas: medimos tu IA con tus propios casos para que decidas con datos qué seguir alquilando y qué poseer.",st1:"Gasto empresarial en IA generativa en 2025, 3,2 veces más que en 2024.",st2:"Solo la mitad de las empresas puede evaluar con confianza el retorno de lo que gasta en IA.",st3:"De las organizaciones no logró un impacto medible en resultados con sus proyectos de IA generativa.",st4:"Código ejecutable de GPT-4 entre marzo y junio de 2023: el mismo modelo cambió sin aviso.",st5:"Ventaja promedio de modelos pequeños afinados sobre GPT-4 en 31 tareas concretas.",st6:"Para 2027 las empresas usarán modelos pequeños y específicos tres veces más que los modelos generales.",sv1_k:"Hoy",sv1_h:"Pagas sin medir",sv1_p:"No sabes cuánto cuesta cada tarea, qué tan bien responde tu IA ni qué pasa cuando el proveedor cambia el modelo.",sv2_k:"Lo que hacemos",sv2_h:"Medimos con tus casos",sv2_p:"Convertimos tus casos reales en evaluaciones y probamos modelos abiertos contra tu proveedor, tarea por tarea.",sv3_k:"Resultado",sv3_h:"Decides con datos",sv3_p:"Sabes qué flujos conviene poseer, cuánto ahorras y te quedas con las evaluaciones para siempre.",skip:"Saltar al contenido",nav_how:"Cómo funciona",nav_pricing:"Precios",nav_faq:"Preguntas",nav_app:"Probar el auditor",cta_measure:"Medir mi IA",
+h1:"Deja de alquilar tu inteligencia.",hero_sub:"En 5 días medimos cuánto te cuesta tu IA, construimos tus evaluaciones con casos reales y probamos modelos abiertos contra tu proveedor actual.",cta_book:"Reservar auditoría · $249",cta_try:"Calcular mi gasto gratis",hero_note:"Precio fundador para las primeras 5 empresas. Entrega digital en 5 días hábiles.",
+r_title:"Factura de IA · octubre",r_meta:"Ejemplo ilustrativo de una startup Serie A",r_l1:"Soporte al cliente",r_l2:"Clasificación de tickets",r_l3:"Resúmenes de llamadas",r_l4:"Extracción de facturas",r_total:"Total alquilado",r_own:"Tuyo",r_stamp:"MEDIDO",
+p_h:"Lo que firmas cuando alquilas tu IA",p_intro:"Nadie lo lee, pero cada llamada a una API trae estas tres cláusulas.",c1_k:"Cláusula 1",c1_h:"El modelo puede cambiar sin aviso.",c1_p:"Una actualización del proveedor y tus prompts dejan de dar el mismo resultado. Sin evaluaciones propias, te enteras por tus clientes.",c2_k:"Cláusula 2",c2_h:"Pagas más cada vez que creces.",c2_p:"El gasto en tokens sube con tus usuarios. Muchas tareas repetitivas funcionarían con un modelo más pequeño y propio.",c3_k:"Cláusula 3",c3_h:"Tu conocimiento se queda afuera.",c3_p:"El criterio de tus expertos nunca se convierte en datos. El modelo que usas no aprende nada de tu negocio.",
+h_h:"La auditoría, día por día",h_intro:"Cada día sube un diente de tu llave: al quinto sabes exactamente qué te conviene poseer.",d1_n:"Día 1",d1_h:"Inventario",d1_p:"Mapeamos cada uso de IA, proveedor, modelo y gasto mensual.",d2_n:"Día 2",d2_h:"Tus evaluaciones",d2_p:"Convertimos 100 casos reales en un set de evaluaciones con rúbricas.",d3_n:"Día 3",d3_h:"Benchmark",d3_p:"Probamos 3 modelos abiertos contra tu proveedor con tus propios casos.",d4_n:"Día 4",d4_h:"Costos y ahorro",d4_p:"Costo por tarea hoy vs. modelo propio, con calidad medida.",d5_n:"Día 5",d5_h:"Reporte y llaves",d5_p:"Te entregamos el reporte, el repositorio de evaluaciones y la hoja de ruta.",
+dl1_h:"Reporte ejecutivo",dl1_p:"Gasto, calidad y riesgo de cada flujo, explicado para fundadores y para el equipo técnico.",dl2_h:"Repositorio de evaluaciones",dl2_p:"Tus casos, rúbricas y scripts. Es tuyo: sirve para medir cualquier modelo, hoy y mañana.",dl3_h:"Modelo de ahorro",dl3_p:"Proyección a 12 meses del costo actual vs. modelo abierto o afinado.",dl4_h:"Hoja de ruta de propiedad",dl4_p:"Qué flujos migrar primero, cuáles no tocar y qué necesitas para lograrlo.",
+b_h:"Prueba el auditor antes de pagar",b_p:"Carga tus flujos de IA, compara costos con precios en vivo de modelos abiertos y arma tus primeras evaluaciones. Gratis, en tu navegador.",b_cta:"Abrir el auditor",
+k_h:"Empezamos auditándonos a nosotros",k_p:"Nuestro primer caso es nuestra propia operación: cada agente que usamos para vender, escribir y atender pasa por la misma auditoría que te ofrecemos. Publicamos el método completo y los números en nuestro newsletter.",k_cta:"Leer el caso en Substack",k_ring:"evaluaciones propias por auditoría",
+pr_h:"Empieza midiendo. Decide después.",pr_intro:"Precios en USD. El pago se procesa de forma segura y recibes factura automática.",from:"desde",per_month:"/mes",
+pl1_h:"Evals Pack",pl1_a:"Plantilla y metodología para crear tus evaluaciones",pl1_b:"Rúbricas de ejemplo por tipo de tarea",pl1_c:"Guía en ES, EN, PT y FR",pl1_cta:"Comprar Evals Pack",
+pl2_flag:"5 cupos fundador",pl2_h:"AI Ownership Audit",pl2_was:"Luego $490",pl2_a:"Inventario de gasto e IA",pl2_b:"100 evaluaciones con tus casos",pl2_c:"3 modelos abiertos vs. tu proveedor",pl2_d:"Reporte y repositorio en 5 días",pl2_cta:"Reservar auditoría",
+pl3_h:"Programa de afinado",pl3_a:"Modelo abierto afinado con tus datos",pl3_b:"Despliegue y plan de reversa",pl3_c:"Los pesos son tuyos por contrato",pl3_cta:"Agendar llamada",
+pl4_h:"sua Continuo",pl4_a:"Re-evaluación mensual",pl4_b:"Alertas cuando un modelo cambia",pl4_c:"Mejora continua del modelo propio",pl4_cta:"Hablar con nosotros",
+pr_fine:"Pagos procesados por Polar como Merchant of Record: impuestos y factura incluidos. Si en la auditoría no encontramos ahorro ni mejora medible, te devolvemos el 100 %.",
+f_h:"Preguntas frecuentes",q1:"¿Qué datos necesitan?",a1:"Ejemplos reales de entradas y salidas de tus flujos de IA (pueden ir anonimizados) y tu factura de API. Firmamos acuerdo de confidencialidad antes de recibir nada.",q2:"¿Mis datos salen de mi empresa?",a2:"Solo lo que tú autorices. Podemos correr las evaluaciones en tu propia nube o con datos sintéticos que imitan los tuyos.",q3:"¿Qué pasa si el modelo abierto pierde?",a3:"Te lo decimos con los números. Igual te quedas con tus evaluaciones, que te sirven para negociar con tu proveedor y detectar cambios de calidad.",q4:"¿Qué modelos prueban?",a4:"Elegimos según tu tarea, idioma y licencia comercial entre las familias abiertas líderes del momento, y revisamos la licencia de cada una antes de recomendarla.",q5:"¿Trabajan en mi idioma y país?",a5:"Sí: español, inglés, portugués y francés. Trabajamos 100 % remoto con empresas de cualquier país.",q6:"¿Cómo facturan?",a6:"Cobramos a través de Polar, que emite la factura y gestiona impuestos según tu país. Aceptamos tarjetas internacionales.",
+ct_h:"Mide tu IA esta semana",ct_p:"Déjanos tus datos y te respondemos en menos de 24 horas con los próximos pasos. O agenda directamente 15 minutos.",ct_cal:"Agendar 15 minutos",
+fm_name:"Nombre",fm_email:"Correo de trabajo",fm_company:"Empresa",fm_country:"País",fm_spend:"Gasto mensual aproximado en IA",fm_choose:"Elige un rango",fm_msg:"¿Qué usa IA hoy en tu empresa?",fm_consent:"Acepto que sua me contacte sobre esta solicitud. Puedo darme de baja cuando quiera.",fm_send:"Enviar solicitud",
+e_name:"Escribe tu nombre.",e_email:"Escribe un correo válido, por ejemplo ana@empresa.com.",e_consent:"Necesitamos tu permiso para contactarte.",s_sending:"Enviando…",s_ok:"Recibido. Te escribimos en menos de 24 horas.",s_mail:"Abrimos tu correo con el mensaje listo: solo pulsa enviar.",s_fail:"No se pudo enviar. Escríbenos a ",s_soon:"Reserva tu cupo aquí: te respondemos en menos de 24 horas con el enlace de pago y los próximos pasos.",
+ft_tag:"Make your AI yours.",ft_llc:"sua es una marca operada por una LLC registrada en EE. UU.",ft_terms:"Términos",ft_privacy:"Privacidad",doc_title:"sua · Tu IA, por fin tuya"},
+en:{nav_why:"What we solve",w_h:"What we solve",w_lead:"Companies spend more and more on AI they don't measure or control. Meanwhile, smaller models you own already win on specific tasks. sua connects the two: we measure your AI on your own cases so you decide with data what to keep renting and what to own.",st1:"Enterprise generative AI spend in 2025, 3.2× more than in 2024.",st2:"Only half of companies can confidently evaluate the return on their AI spend.",st3:"Of organizations saw no measurable P&L impact from their generative AI projects.",st4:"Directly executable GPT-4 code between March and June 2023: the same model changed without notice.",st5:"Average lead of small fine-tuned models over GPT-4 across 31 specific tasks.",st6:"By 2027 companies will use small, task-specific models three times more than general-purpose models.",sv1_k:"Today",sv1_h:"You pay without measuring",sv1_p:"You don't know what each task costs, how well your AI performs or what happens when the provider changes the model.",sv2_k:"What we do",sv2_h:"We measure on your cases",sv2_p:"We turn your real cases into evals and test open models against your provider, task by task.",sv3_k:"Outcome",sv3_h:"You decide with data",sv3_p:"You know which workflows are worth owning, how much you save, and you keep the evals forever.",skip:"Skip to content",nav_how:"How it works",nav_pricing:"Pricing",nav_faq:"FAQ",nav_app:"Try the auditor",cta_measure:"Measure my AI",
+h1:"Stop renting your intelligence.",hero_sub:"In 5 days we measure what your AI costs, build your own evals from real cases, and test open models against your current provider.",cta_book:"Book the audit · $249",cta_try:"Calculate my spend for free",hero_note:"Founder price for the first 5 companies. Digital delivery in 5 business days.",
+r_title:"AI invoice · October",r_meta:"Illustrative example of a Series A startup",r_l1:"Customer support",r_l2:"Ticket classification",r_l3:"Call summaries",r_l4:"Invoice extraction",r_total:"Total rented",r_own:"Owned",r_stamp:"MEASURED",
+p_h:"What you sign when you rent your AI",p_intro:"Nobody reads it, but every API call comes with these three clauses.",c1_k:"Clause 1",c1_h:"The model can change without notice.",c1_p:"One provider update and your prompts stop giving the same results. Without your own evals, your customers tell you first.",c2_k:"Clause 2",c2_h:"You pay more every time you grow.",c2_p:"Token spend scales with your users. Many repetitive tasks would run fine on a smaller model you own.",c3_k:"Clause 3",c3_h:"Your knowledge stays outside.",c3_p:"Your experts' judgment never becomes data. The model you use learns nothing about your business.",
+h_h:"The audit, day by day",h_intro:"Every day cuts one more tooth of your key: by day five you know exactly what is worth owning.",d1_n:"Day 1",d1_h:"Inventory",d1_p:"We map every AI use case, provider, model and monthly spend.",d2_n:"Day 2",d2_h:"Your evals",d2_p:"We turn 100 real cases into an eval set with rubrics.",d3_n:"Day 3",d3_h:"Benchmark",d3_p:"We test 3 open models against your provider on your own cases.",d4_n:"Day 4",d4_h:"Cost and savings",d4_p:"Cost per task today vs. an owned model, with measured quality.",d5_n:"Day 5",d5_h:"Report and keys",d5_p:"You get the report, the eval repository and the roadmap.",
+dl1_h:"Executive report",dl1_p:"Spend, quality and risk for each workflow, written for founders and for the engineering team.",dl2_h:"Eval repository",dl2_p:"Your cases, rubrics and scripts. It's yours: use it to measure any model, today and tomorrow.",dl3_h:"Savings model",dl3_p:"12-month projection of current cost vs. an open or fine-tuned model.",dl4_h:"Ownership roadmap",dl4_p:"Which workflows to migrate first, which to leave alone, and what you need to get there.",
+b_h:"Try the auditor before you pay",b_p:"Load your AI workflows, compare costs with live open-model prices and draft your first evals. Free, in your browser.",b_cta:"Open the auditor",
+k_h:"We started by auditing ourselves",k_p:"Our first case is our own operation: every agent we use to sell, write and support goes through the same audit we offer you. We publish the full method and the numbers in our newsletter.",k_cta:"Read the case on Substack",k_ring:"custom evals per audit",
+pr_h:"Start by measuring. Decide later.",pr_intro:"Prices in USD. Payment is processed securely and you get an automatic invoice.",from:"from",per_month:"/mo",
+pl1_h:"Evals Pack",pl1_a:"Template and method to build your evals",pl1_b:"Sample rubrics by task type",pl1_c:"Guide in EN, ES, PT and FR",pl1_cta:"Buy the Evals Pack",
+pl2_flag:"5 founder spots",pl2_h:"AI Ownership Audit",pl2_was:"Then $490",pl2_a:"AI and spend inventory",pl2_b:"100 evals from your cases",pl2_c:"3 open models vs. your provider",pl2_d:"Report and repository in 5 days",pl2_cta:"Book the audit",
+pl3_h:"Fine-tuning program",pl3_a:"Open model fine-tuned on your data",pl3_b:"Deployment and rollback plan",pl3_c:"The weights are yours by contract",pl3_cta:"Book a call",
+pl4_h:"sua Continuous",pl4_a:"Monthly re-evaluation",pl4_b:"Alerts when a model changes",pl4_c:"Continuous improvement of your model",pl4_cta:"Talk to us",
+pr_fine:"Payments processed by Polar as Merchant of Record: taxes and invoice included. If the audit finds no measurable savings or improvement, you get a 100% refund.",
+f_h:"Frequently asked questions",q1:"What data do you need?",a1:"Real examples of inputs and outputs from your AI workflows (anonymized is fine) and your API invoice. We sign an NDA before receiving anything.",q2:"Does my data leave my company?",a2:"Only what you authorize. We can run the evals in your own cloud or with synthetic data that mirrors yours.",q3:"What if the open model loses?",a3:"We tell you, with the numbers. You still keep your evals, which help you negotiate with your provider and catch quality changes.",q4:"Which models do you test?",a4:"We pick from today's leading open model families based on your task, language and commercial license, and we check each license before recommending it.",q5:"Do you work in my language and country?",a5:"Yes: English, Spanish, Portuguese and French. We work 100% remotely with companies anywhere.",q6:"How do you invoice?",a6:"We charge through Polar, which issues the invoice and handles taxes for your country. International cards accepted.",
+ct_h:"Measure your AI this week",ct_p:"Leave your details and we reply within 24 hours with next steps. Or book 15 minutes directly.",ct_cal:"Book 15 minutes",
+fm_name:"Name",fm_email:"Work email",fm_company:"Company",fm_country:"Country",fm_spend:"Approximate monthly AI spend",fm_choose:"Choose a range",fm_msg:"What does your company use AI for today?",fm_consent:"I agree that sua may contact me about this request. I can unsubscribe anytime.",fm_send:"Send request",
+e_name:"Enter your name.",e_email:"Enter a valid email, for example ana@company.com.",e_consent:"We need your permission to contact you.",s_sending:"Sending…",s_ok:"Received. We'll write back within 24 hours.",s_mail:"We opened your email app with the message ready: just hit send.",s_fail:"Couldn't send. Email us at ",s_soon:"Reserve your spot here: we'll reply within 24 hours with the payment link and next steps.",
+ft_tag:"Make your AI yours.",ft_llc:"sua is a brand operated by a US-registered LLC.",ft_terms:"Terms",ft_privacy:"Privacy",doc_title:"sua · Make your AI yours"},
+pt:{nav_why:"O que resolvemos",w_h:"O que resolvemos",w_lead:"As empresas gastam cada vez mais em IA que não medem nem controlam. Ao mesmo tempo, modelos menores e próprios já vencem em tarefas específicas. A sua conecta as duas coisas: medimos sua IA com seus próprios casos para você decidir com dados o que continuar alugando e o que ter.",st1:"Gasto empresarial com IA generativa em 2025, 3,2 vezes mais que em 2024.",st2:"Só metade das empresas consegue avaliar com confiança o retorno do que gasta com IA.",st3:"Das organizações não obteve impacto mensurável nos resultados com projetos de IA generativa.",st4:"Código executável do GPT-4 entre março e junho de 2023: o mesmo modelo mudou sem aviso.",st5:"Vantagem média de modelos pequenos ajustados sobre o GPT-4 em 31 tarefas específicas.",st6:"Até 2027 as empresas usarão modelos pequenos e específicos três vezes mais que modelos gerais.",sv1_k:"Hoje",sv1_h:"Você paga sem medir",sv1_p:"Você não sabe quanto custa cada tarefa, quão bem sua IA responde nem o que acontece quando o provedor muda o modelo.",sv2_k:"O que fazemos",sv2_h:"Medimos com seus casos",sv2_p:"Transformamos seus casos reais em avaliações e testamos modelos abertos contra seu provedor, tarefa por tarefa.",sv3_k:"Resultado",sv3_h:"Você decide com dados",sv3_p:"Você sabe quais fluxos vale a pena ter, quanto economiza e fica com as avaliações para sempre.",skip:"Pular para o conteúdo",nav_how:"Como funciona",nav_pricing:"Preços",nav_faq:"Perguntas",nav_app:"Testar o auditor",cta_measure:"Medir minha IA",
+h1:"Pare de alugar sua inteligência.",hero_sub:"Em 5 dias medimos quanto sua IA custa, construímos suas avaliações com casos reais e testamos modelos abertos contra o seu provedor atual.",cta_book:"Reservar auditoria · $249",cta_try:"Calcular meu gasto grátis",hero_note:"Preço de fundador para as 5 primeiras empresas. Entrega digital em 5 dias úteis.",
+r_title:"Fatura de IA · outubro",r_meta:"Exemplo ilustrativo de uma startup Série A",r_l1:"Atendimento ao cliente",r_l2:"Classificação de tickets",r_l3:"Resumos de chamadas",r_l4:"Extração de notas fiscais",r_total:"Total alugado",r_own:"Seu",r_stamp:"MEDIDO",
+p_h:"O que você assina quando aluga sua IA",p_intro:"Ninguém lê, mas toda chamada de API vem com estas três cláusulas.",c1_k:"Cláusula 1",c1_h:"O modelo pode mudar sem aviso.",c1_p:"Uma atualização do provedor e seus prompts deixam de dar o mesmo resultado. Sem avaliações próprias, você descobre pelos seus clientes.",c2_k:"Cláusula 2",c2_h:"Você paga mais toda vez que cresce.",c2_p:"O gasto com tokens sobe junto com seus usuários. Muitas tarefas repetitivas funcionariam com um modelo menor e seu.",c3_k:"Cláusula 3",c3_h:"Seu conhecimento fica de fora.",c3_p:"O critério dos seus especialistas nunca vira dado. O modelo que você usa não aprende nada sobre o seu negócio.",
+h_h:"A auditoria, dia a dia",h_intro:"Cada dia corta mais um dente da sua chave: no quinto você sabe exatamente o que vale a pena ter.",d1_n:"Dia 1",d1_h:"Inventário",d1_p:"Mapeamos cada uso de IA, provedor, modelo e gasto mensal.",d2_n:"Dia 2",d2_h:"Suas avaliações",d2_p:"Transformamos 100 casos reais em um conjunto de avaliações com rubricas.",d3_n:"Dia 3",d3_h:"Benchmark",d3_p:"Testamos 3 modelos abertos contra o seu provedor com os seus casos.",d4_n:"Dia 4",d4_h:"Custos e economia",d4_p:"Custo por tarefa hoje vs. modelo próprio, com qualidade medida.",d5_n:"Dia 5",d5_h:"Relatório e chaves",d5_p:"Entregamos o relatório, o repositório de avaliações e o roteiro.",
+dl1_h:"Relatório executivo",dl1_p:"Gasto, qualidade e risco de cada fluxo, explicado para fundadores e para o time técnico.",dl2_h:"Repositório de avaliações",dl2_p:"Seus casos, rubricas e scripts. É seu: serve para medir qualquer modelo, hoje e amanhã.",dl3_h:"Modelo de economia",dl3_p:"Projeção de 12 meses do custo atual vs. modelo aberto ou ajustado.",dl4_h:"Roteiro de propriedade",dl4_p:"Quais fluxos migrar primeiro, quais não tocar e do que você precisa para chegar lá.",
+b_h:"Teste o auditor antes de pagar",b_p:"Carregue seus fluxos de IA, compare custos com preços ao vivo de modelos abertos e monte suas primeiras avaliações. Grátis, no seu navegador.",b_cta:"Abrir o auditor",
+k_h:"Começamos auditando a nós mesmos",k_p:"Nosso primeiro caso é a nossa própria operação: cada agente que usamos para vender, escrever e atender passa pela mesma auditoria que oferecemos. Publicamos o método completo e os números na nossa newsletter.",k_cta:"Ler o caso no Substack",k_ring:"avaliações próprias por auditoria",
+pr_h:"Comece medindo. Decida depois.",pr_intro:"Preços em USD. O pagamento é processado com segurança e você recebe nota automática.",from:"a partir de",per_month:"/mês",
+pl1_h:"Evals Pack",pl1_a:"Modelo e metodologia para criar suas avaliações",pl1_b:"Rubricas de exemplo por tipo de tarefa",pl1_c:"Guia em PT, ES, EN e FR",pl1_cta:"Comprar Evals Pack",
+pl2_flag:"5 vagas de fundador",pl2_h:"AI Ownership Audit",pl2_was:"Depois $490",pl2_a:"Inventário de gasto e IA",pl2_b:"100 avaliações com seus casos",pl2_c:"3 modelos abertos vs. seu provedor",pl2_d:"Relatório e repositório em 5 dias",pl2_cta:"Reservar auditoria",
+pl3_h:"Programa de ajuste fino",pl3_a:"Modelo aberto ajustado com seus dados",pl3_b:"Implantação e plano de reversão",pl3_c:"Os pesos são seus por contrato",pl3_cta:"Agendar conversa",
+pl4_h:"sua Contínuo",pl4_a:"Reavaliação mensal",pl4_b:"Alertas quando um modelo muda",pl4_c:"Melhoria contínua do seu modelo",pl4_cta:"Falar com a gente",
+pr_fine:"Pagamentos processados pela Polar como Merchant of Record: impostos e nota incluídos. Se a auditoria não encontrar economia ou melhoria mensurável, devolvemos 100 %.",
+f_h:"Perguntas frequentes",q1:"Quais dados vocês precisam?",a1:"Exemplos reais de entradas e saídas dos seus fluxos de IA (podem ser anonimizados) e sua fatura de API. Assinamos acordo de confidencialidade antes de receber qualquer coisa.",q2:"Meus dados saem da empresa?",a2:"Só o que você autorizar. Podemos rodar as avaliações na sua própria nuvem ou com dados sintéticos que imitam os seus.",q3:"E se o modelo aberto perder?",a3:"Dizemos com os números. Você continua com suas avaliações, que ajudam a negociar com seu provedor e a detectar mudanças de qualidade.",q4:"Quais modelos vocês testam?",a4:"Escolhemos entre as famílias abertas líderes do momento conforme sua tarefa, idioma e licença comercial, e revisamos a licença de cada uma antes de recomendar.",q5:"Vocês atendem no meu idioma e país?",a5:"Sim: português, espanhol, inglês e francês. Trabalhamos 100 % remoto com empresas de qualquer país.",q6:"Como funciona a cobrança?",a6:"Cobramos pela Polar, que emite a nota e cuida dos impostos do seu país. Aceitamos cartões internacionais.",
+ct_h:"Meça sua IA esta semana",ct_p:"Deixe seus dados e respondemos em menos de 24 horas com os próximos passos. Ou agende 15 minutos direto.",ct_cal:"Agendar 15 minutos",
+fm_name:"Nome",fm_email:"E-mail de trabalho",fm_company:"Empresa",fm_country:"País",fm_spend:"Gasto mensal aproximado com IA",fm_choose:"Escolha uma faixa",fm_msg:"Para que sua empresa usa IA hoje?",fm_consent:"Aceito que a sua entre em contato sobre esta solicitação. Posso cancelar quando quiser.",fm_send:"Enviar solicitação",
+e_name:"Digite seu nome.",e_email:"Digite um e-mail válido, por exemplo ana@empresa.com.",e_consent:"Precisamos da sua permissão para entrar em contato.",s_sending:"Enviando…",s_ok:"Recebido. Respondemos em menos de 24 horas.",s_mail:"Abrimos seu e-mail com a mensagem pronta: é só enviar.",s_fail:"Não foi possível enviar. Escreva para ",s_soon:"Reserve sua vaga aqui: respondemos em menos de 24 horas com o link de pagamento e os próximos passos.",
+ft_tag:"Make your AI yours.",ft_llc:"sua é uma marca operada por uma LLC registrada nos EUA.",ft_terms:"Termos",ft_privacy:"Privacidade",doc_title:"sua · Sua IA. De verdade sua."},
+fr:{nav_why:"Ce que nous résolvons",w_h:"Ce que nous résolvons",w_lead:"Les entreprises dépensent de plus en plus pour une IA qu’elles ne mesurent ni ne contrôlent. En parallèle, des modèles plus petits qui leur appartiennent gagnent déjà sur des tâches précises. sua relie les deux : nous mesurons votre IA sur vos propres cas pour que vous décidiez, chiffres à l’appui, ce que vous continuez à louer et ce que vous possédez.",st1:"Dépenses des entreprises en IA générative en 2025, 3,2 fois plus qu’en 2024.",st2:"Seule la moitié des entreprises peut évaluer avec confiance le retour de ses dépenses en IA.",st3:"Des organisations n’ont obtenu aucun impact mesurable sur leurs résultats avec l’IA générative.",st4:"Code GPT-4 directement exécutable entre mars et juin 2023 : le même modèle a changé sans préavis.",st5:"Avance moyenne de petits modèles affinés sur GPT-4 sur 31 tâches précises.",st6:"D’ici 2027, les entreprises utiliseront trois fois plus de petits modèles spécialisés que de modèles généralistes.",sv1_k:"Aujourd’hui",sv1_h:"Vous payez sans mesurer",sv1_p:"Vous ne savez pas combien coûte chaque tâche, ce que vaut votre IA ni ce qui se passe quand le fournisseur change de modèle.",sv2_k:"Ce que nous faisons",sv2_h:"Nous mesurons sur vos cas",sv2_p:"Nous transformons vos cas réels en évaluations et testons des modèles ouverts face à votre fournisseur, tâche par tâche.",sv3_k:"Résultat",sv3_h:"Vous décidez avec des données",sv3_p:"Vous savez quels flux valent la peine d’être possédés, combien vous économisez, et vous gardez les évaluations pour toujours.",skip:"Aller au contenu",nav_how:"Fonctionnement",nav_pricing:"Tarifs",nav_faq:"Questions",nav_app:"Essayer l’auditeur",cta_measure:"Mesurer mon IA",
+h1:"Arrêtez de louer votre intelligence.",hero_sub:"En 5 jours, nous mesurons ce que coûte votre IA, construisons vos évaluations à partir de cas réels et testons des modèles ouverts face à votre fournisseur actuel.",cta_book:"Réserver l’audit · 249 $",cta_try:"Calculer mes dépenses gratuitement",hero_note:"Prix fondateur pour les 5 premières entreprises. Livraison numérique en 5 jours ouvrés.",
+r_title:"Facture IA · octobre",r_meta:"Exemple illustratif d’une startup en série A",r_l1:"Support client",r_l2:"Classement des tickets",r_l3:"Résumés d’appels",r_l4:"Extraction de factures",r_total:"Total loué",r_own:"À vous",r_stamp:"MESURÉ",
+p_h:"Ce que vous signez en louant votre IA",p_intro:"Personne ne le lit, mais chaque appel d’API arrive avec ces trois clauses.",c1_k:"Clause 1",c1_h:"Le modèle peut changer sans préavis.",c1_p:"Une mise à jour du fournisseur et vos prompts ne donnent plus le même résultat. Sans évaluations propres, ce sont vos clients qui vous préviennent.",c2_k:"Clause 2",c2_h:"Vous payez plus à chaque fois que vous grandissez.",c2_p:"La dépense en tokens augmente avec vos utilisateurs. Beaucoup de tâches répétitives tourneraient très bien sur un modèle plus petit qui vous appartient.",c3_k:"Clause 3",c3_h:"Votre savoir reste dehors.",c3_p:"Le jugement de vos experts ne devient jamais de la donnée. Le modèle que vous utilisez n’apprend rien de votre métier.",
+h_h:"L’audit, jour après jour",h_intro:"Chaque jour taille une dent de plus de votre clé : au cinquième, vous savez exactement ce qui vaut la peine d’être possédé.",d1_n:"Jour 1",d1_h:"Inventaire",d1_p:"Nous cartographions chaque usage d’IA, fournisseur, modèle et dépense mensuelle.",d2_n:"Jour 2",d2_h:"Vos évaluations",d2_p:"Nous transformons 100 cas réels en un jeu d’évaluations avec grilles.",d3_n:"Jour 3",d3_h:"Benchmark",d3_p:"Nous testons 3 modèles ouverts face à votre fournisseur sur vos propres cas.",d4_n:"Jour 4",d4_h:"Coûts et économies",d4_p:"Coût par tâche aujourd’hui vs. modèle propre, qualité mesurée.",d5_n:"Jour 5",d5_h:"Rapport et clés",d5_p:"Vous recevez le rapport, le dépôt d’évaluations et la feuille de route.",
+dl1_h:"Rapport de direction",dl1_p:"Dépense, qualité et risque de chaque flux, expliqués pour les fondateurs et pour l’équipe technique.",dl2_h:"Dépôt d’évaluations",dl2_p:"Vos cas, grilles et scripts. Ils vous appartiennent : mesurez n’importe quel modèle, aujourd’hui et demain.",dl3_h:"Modèle d’économies",dl3_p:"Projection sur 12 mois du coût actuel vs. un modèle ouvert ou affiné.",dl4_h:"Feuille de route de propriété",dl4_p:"Quels flux migrer d’abord, lesquels laisser tels quels, et ce qu’il vous faut pour y arriver.",
+b_h:"Essayez l’auditeur avant de payer",b_p:"Chargez vos flux d’IA, comparez les coûts avec les prix en direct des modèles ouverts et rédigez vos premières évaluations. Gratuit, dans votre navigateur.",b_cta:"Ouvrir l’auditeur",
+k_h:"Nous avons commencé par nous auditer",k_p:"Notre premier cas, c’est notre propre activité : chaque agent que nous utilisons pour vendre, écrire et répondre passe par le même audit que celui que nous vous proposons. Nous publions la méthode complète et les chiffres dans notre newsletter.",k_cta:"Lire le cas sur Substack",k_ring:"évaluations propres par audit",
+pr_h:"Commencez par mesurer. Décidez ensuite.",pr_intro:"Prix en USD. Le paiement est sécurisé et la facture est automatique.",from:"dès",per_month:"/mois",
+pl1_h:"Evals Pack",pl1_a:"Modèle et méthode pour créer vos évaluations",pl1_b:"Grilles d’exemple par type de tâche",pl1_c:"Guide en FR, EN, ES et PT",pl1_cta:"Acheter l’Evals Pack",
+pl2_flag:"5 places fondateur",pl2_h:"AI Ownership Audit",pl2_was:"Ensuite 490 $",pl2_a:"Inventaire de l’IA et des dépenses",pl2_b:"100 évaluations à partir de vos cas",pl2_c:"3 modèles ouverts vs. votre fournisseur",pl2_d:"Rapport et dépôt en 5 jours",pl2_cta:"Réserver l’audit",
+pl3_h:"Programme d’affinage",pl3_a:"Modèle ouvert affiné sur vos données",pl3_b:"Déploiement et plan de retour arrière",pl3_c:"Les poids vous appartiennent par contrat",pl3_cta:"Prendre rendez-vous",
+pl4_h:"sua Continu",pl4_a:"Réévaluation mensuelle",pl4_b:"Alertes quand un modèle change",pl4_c:"Amélioration continue de votre modèle",pl4_cta:"Nous écrire",
+pr_fine:"Paiements traités par Polar en tant que Merchant of Record : taxes et facture incluses. Si l’audit ne trouve ni économie ni amélioration mesurable, nous vous remboursons à 100 %.",
+f_h:"Questions fréquentes",q1:"De quelles données avez-vous besoin ?",a1:"Des exemples réels d’entrées et de sorties de vos flux d’IA (anonymisés si vous le souhaitez) et votre facture d’API. Nous signons un accord de confidentialité avant de recevoir quoi que ce soit.",q2:"Mes données quittent-elles l’entreprise ?",a2:"Seulement ce que vous autorisez. Nous pouvons exécuter les évaluations dans votre propre cloud ou avec des données synthétiques qui imitent les vôtres.",q3:"Et si le modèle ouvert perd ?",a3:"Nous vous le disons, chiffres à l’appui. Vous gardez vos évaluations, utiles pour négocier avec votre fournisseur et détecter les changements de qualité.",q4:"Quels modèles testez-vous ?",a4:"Nous choisissons parmi les familles de modèles ouverts de référence selon votre tâche, votre langue et la licence commerciale, que nous vérifions avant toute recommandation.",q5:"Travaillez-vous dans ma langue et mon pays ?",a5:"Oui : français, anglais, espagnol et portugais. Nous travaillons 100 % à distance avec des entreprises de tous pays.",q6:"Comment facturez-vous ?",a6:"Nous facturons via Polar, qui émet la facture et gère les taxes de votre pays. Cartes internationales acceptées.",
+ct_h:"Mesurez votre IA cette semaine",ct_p:"Laissez vos coordonnées : nous répondons sous 24 heures avec les prochaines étapes. Ou réservez directement 15 minutes.",ct_cal:"Réserver 15 minutes",
+fm_name:"Nom",fm_email:"E-mail professionnel",fm_company:"Entreprise",fm_country:"Pays",fm_spend:"Dépense mensuelle approximative en IA",fm_choose:"Choisissez une tranche",fm_msg:"À quoi sert l’IA dans votre entreprise aujourd’hui ?",fm_consent:"J’accepte que sua me contacte au sujet de cette demande. Je peux me désinscrire à tout moment.",fm_send:"Envoyer la demande",
+e_name:"Indiquez votre nom.",e_email:"Indiquez un e-mail valide, par exemple ana@entreprise.com.",e_consent:"Nous avons besoin de votre accord pour vous contacter.",s_sending:"Envoi…",s_ok:"Bien reçu. Nous vous répondons sous 24 heures.",s_mail:"Nous avons ouvert votre messagerie avec le message prêt : il suffit d’envoyer.",s_fail:"Envoi impossible. Écrivez-nous à ",s_soon:"Réservez votre place ici : nous répondons sous 24 heures avec le lien de paiement et les prochaines étapes.",
+ft_tag:"Make your AI yours.",ft_llc:"sua est une marque exploitée par une LLC enregistrée aux États-Unis.",ft_terms:"Conditions",ft_privacy:"Confidentialité",doc_title:"sua · Votre IA, enfin à vous"}
+};
+
+(function(){
+  var LANGS=["es","en","pt","fr"], cur="es";
+  function pick(){
+    var q=new URLSearchParams(location.search).get("lang");
+    if(q&&LANGS.indexOf(q)>-1)return q;
+    try{var s=localStorage.getItem("sua-lang");if(s&&LANGS.indexOf(s)>-1)return s}catch(e){}
+    var n=(navigator.language||"es").slice(0,2).toLowerCase();
+    return LANGS.indexOf(n)>-1?n:"en";
+  }
+  function t(k){return (I18N[cur]&&I18N[cur][k])||I18N.es[k]||k}
+  function apply(l){
+    cur=l;document.documentElement.lang=l;document.title=t("doc_title");
+    document.querySelectorAll("[data-i18n]").forEach(function(el){el.textContent=t(el.dataset.i18n)});
+    document.querySelectorAll(".lang button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.lang===l))});
+    try{localStorage.setItem("sua-lang",l)}catch(e){}
+    document.querySelectorAll("[data-legal]").forEach(function(a){a.href="/legal?lang="+l+a.getAttribute("href").replace(/^[^#]*/,"")});
+    var u=new URL(location.href);u.searchParams.set("lang",l);try{history.replaceState(null,"",u)}catch(e){}
+  }
+  window.suaT=t;
+  document.querySelectorAll(".lang button").forEach(function(b){b.addEventListener("click",function(){apply(b.dataset.lang)})});
+  apply(pick());
+
+  // Links configurables
+  function wire(){
+    document.querySelectorAll("[data-plan]").forEach(function(a){
+      var url=CONFIG.polar[a.dataset.plan];
+      if(url){a.href=url;a.target="_blank";a.rel="noopener"}
+      else if(a.dataset.plan==="audit"||a.dataset.plan==="evals"){
+        a.addEventListener("click",function(e){e.preventDefault();var st=document.getElementById("formStatus");document.getElementById("contact").scrollIntoView();var m=document.querySelector("#leadForm [name=message]");if(m&&!m.value)m.value=(a.dataset.plan==="audit"?"AI Ownership Audit":"Evals Pack");st.textContent=t("s_soon");document.querySelector("#leadForm [name=name]").focus({preventScroll:true})})
+      }
+    });
+    document.querySelectorAll("[data-link=cal]").forEach(function(a){if(CONFIG.cal){a.href=CONFIG.cal;a.target="_blank";a.rel="noopener"}else{a.href="mailto:"+CONFIG.email+"?subject=sua%20%E2%80%94%2015%20min"}});
+    document.querySelectorAll("[data-link=substack]").forEach(function(a){if(CONFIG.substack){a.href=CONFIG.substack;a.target="_blank";a.rel="noopener"}else{a.style.display="none"}});
+    document.querySelectorAll("[data-link=email]").forEach(function(a){a.href="mailto:"+CONFIG.email;a.textContent=CONFIG.email});
+  }
+  wire();
+
+  // Formulario con validación (heurísticas: prevención de errores, mensajes claros)
+  var f=document.getElementById("leadForm"),st=document.getElementById("formStatus");
+  function setErr(n,m){var e=f.querySelector('[data-err="'+n+'"]');if(e)e.textContent=m||"";var i=f.querySelector('[name="'+n+'"]');if(i)i.setAttribute("aria-invalid",m?"true":"false")}
+  f.email.addEventListener("blur",function(){if(f.email.value&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value))setErr("email",t("e_email"));else setErr("email")});
+  f.addEventListener("submit",function(e){
+    e.preventDefault();var ok=true;
+    if(!f.name.value.trim()){setErr("name",t("e_name"));ok=false}else setErr("name");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim())){setErr("email",t("e_email"));ok=false}else setErr("email");
+    if(!f.consent.checked){setErr("consent",t("e_consent"));ok=false}else setErr("consent");
+    if(!ok){var first=f.querySelector('[aria-invalid="true"]');if(first)first.focus();return}
+    var data={name:f.name.value.trim(),email:f.email.value.trim().toLowerCase(),company:f.company.value.trim(),country:f.country.value.trim(),spend:f.spend.value,message:f.message.value.trim(),lang:cur,source:"landing",created_at:new Date().toISOString()};
+    if(f.website&&f.website.value){st.textContent=t("s_ok");f.reset();return}
+    st.textContent=t("s_sending");
+    var L=CONFIG.leads||{},p=L.provider||"email";
+    function sent(){st.textContent=t("s_ok");f.reset()}
+    function viaMail(){var body=Object.keys(data).map(function(k){return k+": "+data[k]}).join("\n");location.href="mailto:"+CONFIG.email+"?subject="+encodeURIComponent("sua · "+data.name+" · "+(data.company||""))+"&body="+encodeURIComponent(body);st.textContent=t("s_mail")}
+    function fail(){viaMail()}
+    if(p==="sheets"&&L.sheetsUrl){
+      fetch(L.sheetsUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)}).then(sent).catch(fail);
+    }else if(p==="firebase"&&L.firebaseProjectId&&L.firebaseApiKey){
+      var fields={};Object.keys(data).forEach(function(k){fields[k]={stringValue:String(data[k]).slice(0,2000)}});
+      fetch("https://firestore.googleapis.com/v1/projects/"+encodeURIComponent(L.firebaseProjectId)+"/databases/(default)/documents/leads?key="+encodeURIComponent(L.firebaseApiKey),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fields:fields})})
+      .then(function(r){if(!r.ok)throw new Error(r.status);sent()}).catch(fail);
+    }else if(p==="supabase"&&L.supabaseUrl&&L.supabaseAnonKey){
+      fetch(L.supabaseUrl.replace(/\/$/,"")+"/rest/v1/leads",{method:"POST",headers:{"apikey":L.supabaseAnonKey,"Authorization":"Bearer "+L.supabaseAnonKey,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(data)})
+      .then(function(r){if(!r.ok)throw new Error(r.status);sent()}).catch(fail);
+    }else{viaMail()}
+  });
+})();
+</script>
+</body>
+</html>

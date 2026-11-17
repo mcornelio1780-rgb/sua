@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>sua Auditor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-19%203%2048%2042%22%3E%3Crect%20x%3D%22-19%22%20y%3D%223%22%20width%3D%2248%22%20height%3D%2242%22%20rx%3D%228%22%20fill%3D%22%231B2CC1%22/%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23EEF0F3%22%20stroke-width%3D%228%22%3E%3Cpath%20d%3D%22M-12%2024%20A12%2012%200%201%200%2012%2024%20A12%2012%200%201%200%20-12%2024%20M12%208%20V40%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23EEF0F3%22%3E%3Cpath%20d%3D%22M15.5%2034%20h5.5%20v-6%20h5%20v12%20h-10.5%20z%22/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--tinta:#1B2CC1;--papel:#EEF0F3;--grafito:#1D1F24;--laton:#C9A227;--ahorro:#1F9D5C;--alquiler:#E5484D;
+--bg:#EEF0F3;--fg:#1D1F24;--muted:#5B6170;--line:#C9CEDA;--surface:#FFFFFF;--surface2:#F6F7F9;--brand:#1B2CC1;--brand-fg:#fff;
+--sans:"Archivo","Helvetica Neue",Arial,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1030;--fg:#EEF0F3;--muted:#A9B0C4;--line:#2A3263;--surface:#121A45;--surface2:#0F163D;--brand:#8C97FF;--brand-fg:#0B1030;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1030;--fg:#EEF0F3;--muted:#A9B0C4;--line:#2A3263;--surface:#121A45;--surface2:#0F163D;--brand:#8C97FF;--brand-fg:#0B1030;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15.5px;line-height:1.5}
+svg.logo{display:block;width:100%;height:auto}
+:focus-visible{outline:3px solid var(--laton);outline-offset:2px}
+.app{display:grid;grid-template-columns:240px 1fr;height:100%}
+aside{border-right:1px solid var(--line);padding:20px 16px;display:flex;flex-direction:column;gap:18px;overflow:auto;background:var(--bg)}
+aside .lg{width:70px;color:var(--brand)}
+aside .lg-sub{font-size:13px;color:var(--muted);margin-top:-10px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.steps button{width:100%;text-align:left;font:inherit;background:transparent;border:0;color:var(--muted);padding:9px 10px;border-radius:6px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.steps button .n{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none}
+.steps button[aria-current="page"]{background:var(--surface);color:var(--fg);font-weight:600}
+.steps button[aria-current="page"] .n{background:var(--brand);border-color:var(--brand);color:var(--brand-fg)}
+.steps button.done .n{border-color:var(--ahorro);color:var(--ahorro)}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted)}
+.lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:3px;width:max-content}
+.lang button{font:inherit;font-size:12.5px;font-weight:600;border:0;background:transparent;color:var(--muted);padding:4px 8px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+main{overflow:auto;padding:28px clamp(16px,3vw,40px) 80px}
+.view{display:none;max-width:1180px}.view.active{display:block}
+h1{font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin:0 0 8px;font-weight:720;font-variation-settings:"wdth" 120;color:var(--brand)}
+.lead{color:var(--muted);max-width:70ch;margin:0 0 22px}
+h2{font-size:19px;margin:28px 0 10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:600;font-size:14.5px;border-radius:999px;padding:9px 16px;border:1.5px solid var(--fg);background:transparent;color:var(--fg);cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-fg)}
+.btn.danger{border-color:var(--alquiler);color:var(--alquiler)}
+.btn.link{border:0;padding:6px 8px;color:var(--brand)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{font:inherit;font-size:14.5px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);min-width:0}
+textarea{font-family:var(--mono);font-size:13px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand)}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap;background:var(--surface2)}
+td input,td select{width:100%}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px}
+.kpi b{display:block;font-size:26px;font-variation-settings:"wdth" 118;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi.good b{color:var(--ahorro)}.kpi.bad b{color:var(--alquiler)}
+@media (max-width:900px){.app{grid-template-columns:1fr;height:auto}aside{border-right:0;border-bottom:1px solid var(--line)}.steps{flex-direction:row;flex-wrap:wrap}.kpis{grid-template-columns:repeat(2,1fr)}main{overflow:visible}}
+.empty{border:1.5px dashed var(--line);border-radius:8px;padding:28px;text-align:center;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--line)}
+.pass{color:var(--ahorro)}.fail{color:var(--alquiler)}
+.bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--brand);width:0;transition:width .2s}
+.note{font-size:13px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50;max-width:90vw}
+.toast.show{opacity:1}
+pre.out{font-family:var(--mono);font-size:12px;white-space:pre-wrap;max-height:110px;overflow:auto;margin:0;background:var(--surface2);padding:6px 8px;border-radius:4px}
+.chart{width:100%;height:auto}
+.demo-flag{color:var(--muted);font-size:13px;font-weight:500}
+.report-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+@media print{aside,.noprint,.toast{display:none!important}.app{display:block}main{overflow:visible;padding:0}.view{display:none!important}#v-report{display:block!important}body{background:#fff;color:#1D1F24}.card,.kpi,.tw{border-color:#ccc}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div><div class="lg"><svg class="logo" viewBox="-1 6 110 36" role="img" aria-label="sua"><title>sua</title><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="butt"><path d="M20.84 15.75 A9 6 0 1 0 12.50 24.00 A9 6 0 1 1 4.16 32.25"/><path d="M35 8 V26 A10 10 0 0 0 55 26 M55 8 V40"/><path d="M69 24 A12 12 0 1 0 93 24 A12 12 0 1 0 69 24 M93 8 V40"/></g><g fill="currentColor"><path d="M96.5 34 h5.5 v-6 h5 v12 h-10.5 z"/></g></svg></div></div>
+  <div class="lg-sub" data-i18n="app_sub">Auditor de propiedad de IA</div>
+  <label class="f"><span data-i18n="client">Cliente</span><input id="client" placeholder="Acme Inc." autocomplete="organization"></label>
+  <ol class="steps" id="steps">
+    <li><button type="button" data-view="inventory"><span class="n">1</span><span data-i18n="s1">Inventario y gasto</span></button></li>
+    <li><button type="button" data-view="evals"><span class="n">2</span><span data-i18n="s2">Evaluaciones</span></button></li>
+    <li><button type="button" data-view="bench"><span class="n">3</span><span data-i18n="s3">Benchmark</span></button></li>
+    <li><button type="button" data-view="report"><span class="n">4</span><span data-i18n="s4">Reporte</span></button></li>
+    <li><button type="button" data-view="settings"><span class="n">⚙</span><span data-i18n="s5">Conexión y datos</span></button></li>
+  </ol>
+  <div class="side-foot">
+    <div class="lang" role="group" aria-label="Idioma">
+      <button type="button" data-lang="es">ES</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="pt">PT</button><button type="button" data-lang="fr">FR</button>
+    </div>
+    <span id="saved" data-i18n="saved">Guardado en este navegador</span>
+    <a href="/" style="color:var(--brand)" data-i18n="back_site">Volver al sitio</a>
+  </div>
+</aside>
+
+<main>
+<!-- 1 INVENTARIO -->
+<section class="view" id="v-inventory">
+  <h1 data-i18n="inv_h">¿Cuánto te cuesta tu IA hoy?</h1>
+  <p class="lead" data-i18n="inv_lead">Agrega cada flujo que usa IA. Con el volumen y el modelo calculamos el gasto mensual y anual.</p>
+  <div class="row noprint" style="margin-bottom:12px">
+    <button class="btn primary" id="addWf" type="button" data-i18n="add_wf">Agregar flujo</button>
+    <button class="btn" id="loadDemo" type="button" data-i18n="load_demo">Cargar ejemplo</button>
+    <button class="btn" id="refreshPrices" type="button" data-i18n="refresh_prices">Actualizar precios en vivo</button>
+    <span class="note" id="priceStatus"></span>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th data-i18n="c_flow">Flujo</th><th data-i18n="c_model">Modelo actual</th><th class="num" data-i18n="c_calls">Llamadas / mes</th><th class="num" data-i18n="c_in">Tokens entrada</th><th class="num" data-i18n="c_out">Tokens salida</th><th class="num" data-i18n="c_pin">$ / 1M entrada</th><th class="num" data-i18n="c_pout">$ / 1M salida</th><th class="num" data-i18n="c_month">$ / mes</th><th></th></tr></thead>
+    <tbody id="wfBody"></tbody>
+  </table></div>
+  <div id="wfEmpty" class="empty" style="margin-top:12px" data-i18n="wf_empty">Todavía no hay flujos. Agrega el primero o carga el ejemplo para ver cómo funciona.</div>
+  <div class="kpis" id="invKpis"></div>
+  <datalist id="modelList"></datalist>
+  <p class="note" data-i18n="inv_note">Tokens = promedio por llamada. Si no los conoces, tu panel de facturación del proveedor muestra el total mensual: divídelo entre las llamadas.</p>
+</section>
+
+<!-- 2 EVALS -->
+<section class="view" id="v-evals">
+  <h1 data-i18n="ev_h">Tus evaluaciones</h1>
+  <p class="lead" data-i18n="ev_lead">Cada caso es una entrada real y lo que debería responder el modelo. Este set es tuyo: mide cualquier modelo, hoy y mañana.</p>
+  <div class="row noprint" style="margin-bottom:12px">
+    <button class="btn primary" id="addCase" type="button" data-i18n="add_case">Agregar caso</button>
+    <label class="btn" for="importFile" data-i18n="import">Importar CSV / JSONL</label><input type="file" id="importFile" accept=".csv,.jsonl,.json,.txt" hidden>
+    <button class="btn" id="exportEvals" type="button" data-i18n="export_jsonl">Exportar JSONL</button>
+    <button class="btn danger" id="clearCases" type="button" data-i18n="clear_cases">Borrar todos</button>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th style="width:15%" data-i18n="c_flow">Flujo</th><th style="width:32%" data-i18n="c_input">Entrada</th><th style="width:25%" data-i18n="c_expected">Esperado / rúbrica</th><th style="width:14%" data-i18n="c_check">Cómo se califica</th><th></th></tr></thead>
+    <tbody id="caseBody"></tbody>
+  </table></div>
+  <div id="caseEmpty" class="empty" style="margin-top:12px" data-i18n="case_empty">Sin casos todavía. Importa un archivo con columnas input, expected, check, workflow o agrega casos a mano.</div>
+  <p class="note" data-i18n="ev_note">Formas de calificar: «contiene» (la respuesta incluye el texto), «exacto», «regex» y «juez IA» (otro modelo califica con tu rúbrica de 0 a 1).</p>
+</section>
+
+<!-- 3 BENCH -->
+<section class="view" id="v-bench">
+  <h1 data-i18n="b_h">Compara modelos con tus casos</h1>
+  <p class="lead" data-i18n="b_lead">Elige hasta 4 modelos. Cada caso se envía a cada modelo y se califica con tu regla. Ves calidad, costo y velocidad lado a lado.</p>
+  <div class="card noprint">
+    <div class="grid2">
+      <div id="modelPick"></div>
+      <div>
+        <label class="f"><span data-i18n="judge">Modelo juez (para casos «juez IA»)</span><input id="judgeModel" list="modelList" placeholder="openrouter model id"></label>
+        <p class="note" id="keyState" style="margin:10px 0 0"></p>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="runBench" type="button" data-i18n="run">Ejecutar benchmark</button>
+      <button class="btn" id="stopBench" type="button" disabled data-i18n="stop">Detener</button>
+      <button class="btn" id="demoBench" type="button" data-i18n="demo_run">Ver con datos simulados</button>
+      <div style="flex:1;min-width:160px"><div class="bar"><i id="benchBar"></i></div></div>
+      <span class="note" id="benchStatus"></span>
+    </div>
+  </div>
+  <div id="benchSummary" style="margin-top:18px"></div>
+  <h2 data-i18n="detail">Detalle por caso</h2>
+  <div class="tw"><table id="benchTable"><tbody><tr><td class="note" data-i18n="no_results">Aún no hay resultados.</td></tr></tbody></table></div>
+</section>
+
+<!-- 4 REPORT -->
+<section class="view" id="v-report">
+  <div class="report-head">
+    <div><div style="width:84px;color:var(--brand);margin-bottom:12px"><svg class="logo" viewBox="-1 6 110 36" role="img" aria-label="sua"><title>sua</title><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="butt"><path d="M20.84 15.75 A9 6 0 1 0 12.50 24.00 A9 6 0 1 1 4.16 32.25"/><path d="M35 8 V26 A10 10 0 0 0 55 26 M55 8 V40"/><path d="M69 24 A12 12 0 1 0 93 24 A12 12 0 1 0 69 24 M93 8 V40"/></g><g fill="currentColor"><path d="M96.5 34 h5.5 v-6 h5 v12 h-10.5 z"/></g></svg></div>
+    <h1 id="repTitle">AI Ownership Audit</h1>
+    <p class="lead" id="repSub" style="margin-bottom:6px"></p>
+    <span id="repDemo"></span></div>
+    <div class="row noprint"><button class="btn primary" id="printRep" type="button" data-i18n="print">Descargar PDF</button><button class="btn" id="exportProject" type="button" data-i18n="export_project">Exportar proyecto</button></div>
+  </div>
+  <div class="kpis" id="repKpis"></div>
+  <div class="card"><svg class="chart" id="repChart" viewBox="0 0 800 260" role="img"></svg></div>
+  <h2 data-i18n="rep_flows">Recomendación por flujo</h2>
+  <div class="tw"><table>
+    <thead><tr><th data-i18n="c_flow">Flujo</th><th class="num" data-i18n="c_now">Hoy $ / mes</th><th data-i18n="c_target">Modelo candidato</th><th class="num" data-i18n="c_quality">Calidad medida</th><th class="num" data-i18n="c_then">Candidato $ / mes</th><th class="num" data-i18n="c_save">Ahorro / año</th><th data-i18n="c_reco">Recomendación</th></tr></thead>
+    <tbody id="repBody"></tbody>
+  </table></div>
+  <h2 data-i18n="rep_next">Próximos pasos</h2>
+  <ol id="repNext" style="max-width:75ch"></ol>
+  <p class="note" data-i18n="rep_note">Costos de candidatos calculados con precios por token de APIs de modelos abiertos. Autohospedar o afinar cambia el cálculo: se estima en el programa de afinado. Calidad = porcentaje de casos aprobados en este set de evaluaciones.</p>
+</section>
+
+<!-- 5 SETTINGS -->
+<section class="view" id="v-settings">
+  <h1 data-i18n="set_h">Conexión y datos</h1>
+  <p class="lead" data-i18n="set_lead">El auditor funciona con cualquier API compatible con OpenAI. Por defecto usa OpenRouter, que da acceso a cientos de modelos abiertos con una sola clave.</p>
+  <div class="card grid2">
+    <label class="f"><span data-i18n="base_url">URL base de la API</span><input id="baseUrl" placeholder="https://openrouter.ai/api/v1"></label>
+    <label class="f"><span data-i18n="api_key">Clave de API</span><input id="apiKey" type="password" autocomplete="off" placeholder="sk-or-..."></label>
+    <p class="note" style="grid-column:1/-1;margin:0" data-i18n="key_note">La clave se guarda solo en este navegador y se envía únicamente a la URL que pongas arriba. Para Ollama local usa http://localhost:11434/v1 y arranca Ollama con OLLAMA_ORIGINS=*.</p>
+  </div>
+  <h2 data-i18n="data_h">Proyecto</h2>
+  <div class="row">
+    <button class="btn" id="exportProject2" type="button" data-i18n="export_project">Exportar proyecto</button>
+    <label class="btn" for="importProject" data-i18n="import_project">Importar proyecto</label><input type="file" id="importProject" accept=".json" hidden>
+    <button class="btn danger" id="resetAll" type="button" data-i18n="reset">Empezar de cero</button>
+  </div>
+</section>
+</main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var I18N={
+es:{app_sub:"Auditor de propiedad de IA",client:"Cliente",s1:"Inventario y gasto",s2:"Evaluaciones",s3:"Benchmark",s4:"Reporte",s5:"Conexión y datos",saved:"Guardado en este navegador",back_site:"Volver al sitio",
+inv_h:"¿Cuánto te cuesta tu IA hoy?",inv_lead:"Agrega cada flujo que usa IA. Con el volumen y el modelo calculamos el gasto mensual y anual.",add_wf:"Agregar flujo",load_demo:"Cargar ejemplo",refresh_prices:"Actualizar precios en vivo",
+c_flow:"Flujo",c_model:"Modelo actual",c_calls:"Llamadas / mes",c_in:"Tokens entrada",c_out:"Tokens salida",c_pin:"$ / 1M entrada",c_pout:"$ / 1M salida",c_month:"$ / mes",
+wf_empty:"Todavía no hay flujos. Agrega el primero o carga el ejemplo para ver cómo funciona.",inv_note:"Tokens = promedio por llamada. Si no los conoces, tu panel de facturación del proveedor muestra el total mensual: divídelo entre las llamadas.",
+k_month:"Gasto mensual",k_year:"Gasto anual",k_flows:"Flujos con IA",k_top:"Flujo más caro",
+ev_h:"Tus evaluaciones",ev_lead:"Cada caso es una entrada real y lo que debería responder el modelo. Este set es tuyo: mide cualquier modelo, hoy y mañana.",add_case:"Agregar caso",import:"Importar CSV / JSONL",export_jsonl:"Exportar JSONL",clear_cases:"Borrar todos",
+c_input:"Entrada",c_expected:"Esperado / rúbrica",c_check:"Cómo se califica",case_empty:"Sin casos todavía. Importa un archivo con columnas input, expected, check, workflow o agrega casos a mano.",
+ev_note:"Formas de calificar: «contiene» (la respuesta incluye el texto), «exacto», «regex» y «juez IA» (otro modelo califica con tu rúbrica de 0 a 1).",
+ck_contains:"contiene",ck_exact:"exacto",ck_regex:"regex",ck_judge:"juez IA",
+b_h:"Compara modelos con tus casos",b_lead:"Elige hasta 4 modelos. Cada caso se envía a cada modelo y se califica con tu regla. Ves calidad, costo y velocidad lado a lado.",
+models_to_test:"Modelos a comparar",judge:"Modelo juez (para casos «juez IA»)",run:"Ejecutar benchmark",stop:"Detener",demo_run:"Ver con datos simulados",detail:"Detalle por caso",no_results:"Aún no hay resultados.",
+key_missing:"Falta la clave de API. Agrégala en «Conexión y datos» o usa los datos simulados.",key_ok:"Conectado a ",need_cases:"Agrega al menos un caso en Evaluaciones antes de ejecutar.",need_models:"Elige al menos un modelo.",
+running:"Ejecutando",done_run:"Benchmark terminado.",stopped:"Detenido.",pass_rate:"Aprobados",avg_lat:"Latencia media",cost_case:"Costo por caso",
+print:"Descargar PDF",export_project:"Exportar proyecto",rep_flows:"Recomendación por flujo",rep_next:"Próximos pasos",
+c_now:"Hoy $ / mes",c_target:"Modelo candidato",c_quality:"Calidad medida",c_then:"Candidato $ / mes",c_save:"Ahorro / año",c_reco:"Recomendación",
+rep_note:"Costos de candidatos calculados con precios por token de APIs de modelos abiertos. Autohospedar o afinar cambia el cálculo: se estima en el programa de afinado. Calidad = porcentaje de casos aprobados en este set de evaluaciones.",
+r_save_year:"Ahorro anual posible",r_save_pct:"Reducción de costo",r_cases:"Casos evaluados",r_best:"Mejor modelo medido",
+reco_migrate:"Migrar: calidad igual o mejor y menor costo",reco_finetune:"Afinar: barato pero le falta calidad",reco_keep:"Mantener proveedor actual",reco_measure:"Medir primero: sin casos para este flujo",
+not_measured:"sin medir",chart_now:"Hoy",chart_then:"Candidato",
+next1:"Ampliar a 100 casos reales los flujos con mayor gasto.",next2:"Correr el benchmark con los modelos candidatos en producción sombra durante 1 semana.",next3:"Para flujos marcados «Afinar», preparar 500–2.000 ejemplos y cotizar el programa de afinado.",next4:"Repetir esta medición cada mes para detectar cambios del proveedor.",
+set_h:"Conexión y datos",set_lead:"El auditor funciona con cualquier API compatible con OpenAI. Por defecto usa OpenRouter, que da acceso a cientos de modelos abiertos con una sola clave.",
+base_url:"URL base de la API",api_key:"Clave de API",key_note:"La clave se guarda solo en este navegador y se envía únicamente a la URL que pongas arriba. Para Ollama local usa http://localhost:11434/v1 y arranca Ollama con OLLAMA_ORIGINS=*.",
+data_h:"Proyecto",import_project:"Importar proyecto",reset:"Empezar de cero",confirm_reset:"Se borrarán flujos, casos y resultados de este navegador. ¿Continuar?",confirm_clear:"¿Borrar todos los casos?",
+prices_loading:"Cargando precios…",prices_ok:"modelos con precio actualizado",prices_fail:"No se pudieron cargar precios en vivo. Puedes escribirlos a mano.",
+imported:"casos importados",import_fail:"No se pudo leer el archivo. Revisa que tenga columnas input y expected.",exported:"Archivo descargado",demo_flag:"Ejemplo con datos simulados",
+remove:"Quitar",new_flow:"Nuevo flujo",copy_ok:"Copiado",sub_report:"Reporte de auditoría · "},
+en:{app_sub:"AI ownership auditor",client:"Client",s1:"Inventory and spend",s2:"Evals",s3:"Benchmark",s4:"Report",s5:"Connection and data",saved:"Saved in this browser",back_site:"Back to site",
+inv_h:"What does your AI cost today?",inv_lead:"Add each workflow that uses AI. From volume and model we calculate monthly and yearly spend.",add_wf:"Add workflow",load_demo:"Load example",refresh_prices:"Refresh live prices",
+c_flow:"Workflow",c_model:"Current model",c_calls:"Calls / month",c_in:"Input tokens",c_out:"Output tokens",c_pin:"$ / 1M input",c_pout:"$ / 1M output",c_month:"$ / month",
+wf_empty:"No workflows yet. Add the first one or load the example to see how it works.",inv_note:"Tokens = average per call. If you don't know them, your provider's billing panel shows the monthly total: divide it by the number of calls.",
+k_month:"Monthly spend",k_year:"Yearly spend",k_flows:"AI workflows",k_top:"Most expensive workflow",
+ev_h:"Your evals",ev_lead:"Each case is a real input and what the model should answer. This set is yours: measure any model, today and tomorrow.",add_case:"Add case",import:"Import CSV / JSONL",export_jsonl:"Export JSONL",clear_cases:"Delete all",
+c_input:"Input",c_expected:"Expected / rubric",c_check:"Grading",case_empty:"No cases yet. Import a file with columns input, expected, check, workflow or add cases by hand.",
+ev_note:"Grading options: “contains” (answer includes the text), “exact”, “regex” and “AI judge” (another model scores against your rubric from 0 to 1).",
+ck_contains:"contains",ck_exact:"exact",ck_regex:"regex",ck_judge:"AI judge",
+b_h:"Compare models on your cases",b_lead:"Pick up to 4 models. Every case goes to every model and is graded with your rule. See quality, cost and speed side by side.",
+models_to_test:"Models to compare",judge:"Judge model (for “AI judge” cases)",run:"Run benchmark",stop:"Stop",demo_run:"View with simulated data",detail:"Per-case detail",no_results:"No results yet.",
+key_missing:"API key missing. Add it under “Connection and data” or use the simulated data.",key_ok:"Connected to ",need_cases:"Add at least one case under Evals before running.",need_models:"Pick at least one model.",
+running:"Running",done_run:"Benchmark finished.",stopped:"Stopped.",pass_rate:"Passed",avg_lat:"Avg. latency",cost_case:"Cost per case",
+print:"Download PDF",export_project:"Export project",rep_flows:"Recommendation per workflow",rep_next:"Next steps",
+c_now:"Today $ / month",c_target:"Candidate model",c_quality:"Measured quality",c_then:"Candidate $ / month",c_save:"Savings / year",c_reco:"Recommendation",
+rep_note:"Candidate costs use per-token prices of open-model APIs. Self-hosting or fine-tuning changes the math: it is estimated in the fine-tuning program. Quality = share of cases passed in this eval set.",
+r_save_year:"Possible yearly savings",r_save_pct:"Cost reduction",r_cases:"Cases evaluated",r_best:"Best measured model",
+reco_migrate:"Migrate: same or better quality at lower cost",reco_finetune:"Fine-tune: cheap but quality falls short",reco_keep:"Keep current provider",reco_measure:"Measure first: no cases for this workflow",
+not_measured:"not measured",chart_now:"Today",chart_then:"Candidate",
+next1:"Grow the highest-spend workflows to 100 real cases.",next2:"Run the candidate models in shadow production for 1 week.",next3:"For workflows marked “Fine-tune”, prepare 500–2,000 examples and quote the fine-tuning program.",next4:"Repeat this measurement monthly to catch provider changes.",
+set_h:"Connection and data",set_lead:"The auditor works with any OpenAI-compatible API. By default it uses OpenRouter, which gives access to hundreds of open models with one key.",
+base_url:"API base URL",api_key:"API key",key_note:"The key is stored only in this browser and sent only to the URL above. For local Ollama use http://localhost:11434/v1 and start Ollama with OLLAMA_ORIGINS=*.",
+data_h:"Project",import_project:"Import project",reset:"Start over",confirm_reset:"This deletes workflows, cases and results from this browser. Continue?",confirm_clear:"Delete all cases?",
+prices_loading:"Loading prices…",prices_ok:"models with updated prices",prices_fail:"Couldn't load live prices. You can type them by hand.",
+imported:"cases imported",import_fail:"Couldn't read the file. Make sure it has input and expected columns.",exported:"File downloaded",demo_flag:"Example with simulated data",
+remove:"Remove",new_flow:"New workflow",copy_ok:"Copied",sub_report:"Audit report · "},
+pt:{app_sub:"Auditor de propriedade de IA",client:"Cliente",s1:"Inventário e gasto",s2:"Avaliações",s3:"Benchmark",s4:"Relatório",s5:"Conexão e dados",saved:"Salvo neste navegador",back_site:"Voltar ao site",
+inv_h:"Quanto sua IA custa hoje?",inv_lead:"Adicione cada fluxo que usa IA. Com o volume e o modelo calculamos o gasto mensal e anual.",add_wf:"Adicionar fluxo",load_demo:"Carregar exemplo",refresh_prices:"Atualizar preços ao vivo",
+c_flow:"Fluxo",c_model:"Modelo atual",c_calls:"Chamadas / mês",c_in:"Tokens de entrada",c_out:"Tokens de saída",c_pin:"$ / 1M entrada",c_pout:"$ / 1M saída",c_month:"$ / mês",
+wf_empty:"Ainda não há fluxos. Adicione o primeiro ou carregue o exemplo para ver como funciona.",inv_note:"Tokens = média por chamada. Se não souber, o painel de cobrança do provedor mostra o total mensal: divida pelo número de chamadas.",
+k_month:"Gasto mensal",k_year:"Gasto anual",k_flows:"Fluxos com IA",k_top:"Fluxo mais caro",
+ev_h:"Suas avaliações",ev_lead:"Cada caso é uma entrada real e o que o modelo deveria responder. Este conjunto é seu: meça qualquer modelo, hoje e amanhã.",add_case:"Adicionar caso",import:"Importar CSV / JSONL",export_jsonl:"Exportar JSONL",clear_cases:"Apagar todos",
+c_input:"Entrada",c_expected:"Esperado / rubrica",c_check:"Como é avaliado",case_empty:"Ainda sem casos. Importe um arquivo com colunas input, expected, check, workflow ou adicione à mão.",
+ev_note:"Formas de avaliar: “contém” (a resposta inclui o texto), “exato”, “regex” e “juiz IA” (outro modelo avalia com sua rubrica de 0 a 1).",
+ck_contains:"contém",ck_exact:"exato",ck_regex:"regex",ck_judge:"juiz IA",
+b_h:"Compare modelos com seus casos",b_lead:"Escolha até 4 modelos. Cada caso vai para cada modelo e é avaliado com sua regra. Veja qualidade, custo e velocidade lado a lado.",
+models_to_test:"Modelos a comparar",judge:"Modelo juiz (para casos “juiz IA”)",run:"Executar benchmark",stop:"Parar",demo_run:"Ver com dados simulados",detail:"Detalhe por caso",no_results:"Ainda sem resultados.",
+key_missing:"Falta a chave de API. Adicione em “Conexão e dados” ou use os dados simulados.",key_ok:"Conectado a ",need_cases:"Adicione pelo menos um caso em Avaliações antes de executar.",need_models:"Escolha pelo menos um modelo.",
+running:"Executando",done_run:"Benchmark concluído.",stopped:"Parado.",pass_rate:"Aprovados",avg_lat:"Latência média",cost_case:"Custo por caso",
+print:"Baixar PDF",export_project:"Exportar projeto",rep_flows:"Recomendação por fluxo",rep_next:"Próximos passos",
+c_now:"Hoje $ / mês",c_target:"Modelo candidato",c_quality:"Qualidade medida",c_then:"Candidato $ / mês",c_save:"Economia / ano",c_reco:"Recomendação",
+rep_note:"Custos dos candidatos calculados com preços por token de APIs de modelos abertos. Hospedar ou ajustar muda a conta: estimamos no programa de ajuste fino. Qualidade = porcentagem de casos aprovados neste conjunto.",
+r_save_year:"Economia anual possível",r_save_pct:"Redução de custo",r_cases:"Casos avaliados",r_best:"Melhor modelo medido",
+reco_migrate:"Migrar: qualidade igual ou melhor e custo menor",reco_finetune:"Ajustar: barato, mas falta qualidade",reco_keep:"Manter o provedor atual",reco_measure:"Medir primeiro: sem casos para este fluxo",
+not_measured:"sem medir",chart_now:"Hoje",chart_then:"Candidato",
+next1:"Ampliar para 100 casos reais os fluxos de maior gasto.",next2:"Rodar os modelos candidatos em produção sombra por 1 semana.",next3:"Para fluxos marcados “Ajustar”, preparar 500–2.000 exemplos e orçar o programa de ajuste fino.",next4:"Repetir esta medição todo mês para detectar mudanças do provedor.",
+set_h:"Conexão e dados",set_lead:"O auditor funciona com qualquer API compatível com OpenAI. Por padrão usa o OpenRouter, que dá acesso a centenas de modelos abertos com uma só chave.",
+base_url:"URL base da API",api_key:"Chave de API",key_note:"A chave fica só neste navegador e é enviada apenas para a URL acima. Para Ollama local use http://localhost:11434/v1 e inicie o Ollama com OLLAMA_ORIGINS=*.",
+data_h:"Projeto",import_project:"Importar projeto",reset:"Começar do zero",confirm_reset:"Isso apaga fluxos, casos e resultados deste navegador. Continuar?",confirm_clear:"Apagar todos os casos?",
+prices_loading:"Carregando preços…",prices_ok:"modelos com preço atualizado",prices_fail:"Não foi possível carregar preços ao vivo. Você pode digitá-los.",
+imported:"casos importados",import_fail:"Não foi possível ler o arquivo. Verifique as colunas input e expected.",exported:"Arquivo baixado",demo_flag:"Exemplo com dados simulados",
+remove:"Remover",new_flow:"Novo fluxo",copy_ok:"Copiado",sub_report:"Relatório de auditoria · "},
+fr:{app_sub:"Auditeur de propriété IA",client:"Client",s1:"Inventaire et dépenses",s2:"Évaluations",s3:"Benchmark",s4:"Rapport",s5:"Connexion et données",saved:"Enregistré dans ce navigateur",back_site:"Retour au site",
+inv_h:"Combien vous coûte votre IA aujourd’hui ?",inv_lead:"Ajoutez chaque flux qui utilise l’IA. À partir du volume et du modèle, nous calculons la dépense mensuelle et annuelle.",add_wf:"Ajouter un flux",load_demo:"Charger l’exemple",refresh_prices:"Mettre à jour les prix",
+c_flow:"Flux",c_model:"Modèle actuel",c_calls:"Appels / mois",c_in:"Tokens en entrée",c_out:"Tokens en sortie",c_pin:"$ / 1M entrée",c_pout:"$ / 1M sortie",c_month:"$ / mois",
+wf_empty:"Aucun flux pour l’instant. Ajoutez le premier ou chargez l’exemple pour voir comment ça marche.",inv_note:"Tokens = moyenne par appel. Si vous ne les connaissez pas, le tableau de facturation de votre fournisseur indique le total mensuel : divisez-le par le nombre d’appels.",
+k_month:"Dépense mensuelle",k_year:"Dépense annuelle",k_flows:"Flux avec IA",k_top:"Flux le plus coûteux",
+ev_h:"Vos évaluations",ev_lead:"Chaque cas est une entrée réelle et ce que le modèle devrait répondre. Ce jeu vous appartient : mesurez n’importe quel modèle, aujourd’hui et demain.",add_case:"Ajouter un cas",import:"Importer CSV / JSONL",export_jsonl:"Exporter JSONL",clear_cases:"Tout supprimer",
+c_input:"Entrée",c_expected:"Attendu / grille",c_check:"Notation",case_empty:"Aucun cas. Importez un fichier avec les colonnes input, expected, check, workflow ou ajoutez-les à la main.",
+ev_note:"Notation : « contient » (la réponse inclut le texte), « exact », « regex » et « juge IA » (un autre modèle note selon votre grille de 0 à 1).",
+ck_contains:"contient",ck_exact:"exact",ck_regex:"regex",ck_judge:"juge IA",
+b_h:"Comparez les modèles sur vos cas",b_lead:"Choisissez jusqu’à 4 modèles. Chaque cas est envoyé à chaque modèle et noté selon votre règle. Qualité, coût et vitesse côte à côte.",
+models_to_test:"Modèles à comparer",judge:"Modèle juge (pour les cas « juge IA »)",run:"Lancer le benchmark",stop:"Arrêter",demo_run:"Voir avec des données simulées",detail:"Détail par cas",no_results:"Pas encore de résultats.",
+key_missing:"Clé d’API manquante. Ajoutez-la dans « Connexion et données » ou utilisez les données simulées.",key_ok:"Connecté à ",need_cases:"Ajoutez au moins un cas dans Évaluations avant de lancer.",need_models:"Choisissez au moins un modèle.",
+running:"En cours",done_run:"Benchmark terminé.",stopped:"Arrêté.",pass_rate:"Réussis",avg_lat:"Latence moyenne",cost_case:"Coût par cas",
+print:"Télécharger le PDF",export_project:"Exporter le projet",rep_flows:"Recommandation par flux",rep_next:"Prochaines étapes",
+c_now:"Aujourd’hui $ / mois",c_target:"Modèle candidat",c_quality:"Qualité mesurée",c_then:"Candidat $ / mois",c_save:"Économie / an",c_reco:"Recommandation",
+rep_note:"Coûts des candidats calculés avec les prix par token des API de modèles ouverts. L’auto-hébergement ou l’affinage change le calcul : il est estimé dans le programme d’affinage. Qualité = part des cas réussis dans ce jeu d’évaluations.",
+r_save_year:"Économie annuelle possible",r_save_pct:"Réduction de coût",r_cases:"Cas évalués",r_best:"Meilleur modèle mesuré",
+reco_migrate:"Migrer : qualité égale ou meilleure, coût plus bas",reco_finetune:"Affiner : bon marché mais qualité insuffisante",reco_keep:"Garder le fournisseur actuel",reco_measure:"Mesurer d’abord : aucun cas pour ce flux",
+not_measured:"non mesuré",chart_now:"Aujourd’hui",chart_then:"Candidat",
+next1:"Porter à 100 cas réels les flux les plus coûteux.",next2:"Faire tourner les modèles candidats en production fantôme pendant 1 semaine.",next3:"Pour les flux marqués « Affiner », préparer 500 à 2 000 exemples et chiffrer le programme d’affinage.",next4:"Répéter cette mesure chaque mois pour détecter les changements du fournisseur.",
+set_h:"Connexion et données",set_lead:"L’auditeur fonctionne avec toute API compatible OpenAI. Par défaut, il utilise OpenRouter, qui donne accès à des centaines de modèles ouverts avec une seule clé.",
+base_url:"URL de base de l’API",api_key:"Clé d’API",key_note:"La clé reste dans ce navigateur et n’est envoyée qu’à l’URL ci-dessus. Pour Ollama en local, utilisez http://localhost:11434/v1 et lancez Ollama avec OLLAMA_ORIGINS=*.",
+data_h:"Projet",import_project:"Importer un projet",reset:"Repartir de zéro",confirm_reset:"Les flux, cas et résultats de ce navigateur seront supprimés. Continuer ?",confirm_clear:"Supprimer tous les cas ?",
+prices_loading:"Chargement des prix…",prices_ok:"modèles avec prix à jour",prices_fail:"Impossible de charger les prix en direct. Vous pouvez les saisir à la main.",
+imported:"cas importés",import_fail:"Lecture impossible. Vérifiez les colonnes input et expected.",exported:"Fichier téléchargé",demo_flag:"Exemple avec des données simulées",
+remove:"Retirer",new_flow:"Nouveau flux",copy_ok:"Copié",sub_report:"Rapport d’audit · "}
+};
+
+(function(){
+var KEY="sua-auditor-v1";
+var S=load()||fresh();
+function fresh(){return{lang:null,client:"",view:"inventory",workflows:[],cases:[],prices:{},bench:{models:[],results:{},demo:false},settings:{baseUrl:"https://openrouter.ai/api/v1",key:"",judge:""}}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+var saveT;function save(){clearTimeout(saveT);saveT=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},250)}
+var LANGS=["es","en","pt","fr"];
+if(!S.lang){var n=(navigator.language||"es").slice(0,2);S.lang=LANGS.indexOf(n)>-1?n:"en"}
+var q=new URLSearchParams(location.search).get("lang");if(q&&LANGS.indexOf(q)>-1)S.lang=q;
+function t(k){return(I18N[S.lang]||I18N.es)[k]||I18N.es[k]||k}
+function $(s,r){return(r||document).querySelector(s)}function $$(s,r){return[].slice.call((r||document).querySelectorAll(s))}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function uid(){return Math.random().toString(36).slice(2,9)}
+function money(v){var a=Math.abs(v);var d=a<10?2:0;return(v<0?"-":"")+"$"+a.toLocaleString(S.lang==="en"?"en-US":S.lang,{minimumFractionDigits:d,maximumFractionDigits:d})}
+function micro(v){return "$"+(v<0.01?v.toFixed(5):v.toFixed(4))}
+var toastEl=$("#toast");function say(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(say.t);say.t=setTimeout(function(){toastEl.classList.remove("show")},2400)}
+function dl(name,content,type){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type:type||"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},400);say(t("exported"))}
+
+/* ---------- i18n + navigation ---------- */
+function applyLang(){document.documentElement.lang=S.lang;$$("[data-i18n]").forEach(function(el){el.textContent=t(el.dataset.i18n)});$$(".lang button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.lang===S.lang))});renderAll()}
+$$(".lang button").forEach(function(b){b.onclick=function(){S.lang=b.dataset.lang;save();applyLang()}});
+function go(v){S.view=v;$$(".view").forEach(function(s){s.classList.toggle("active",s.id==="v-"+v)});$$("#steps button").forEach(function(b){b.setAttribute("aria-current",b.dataset.view===v?"page":"false")});if(v==="report")renderReport();if(v==="bench")renderBenchSetup();save()}
+$$("#steps button").forEach(function(b){b.onclick=function(){go(b.dataset.view)}});
+$("#client").value=S.client;$("#client").oninput=function(e){S.client=e.target.value;save();renderReportHead()};
+
+/* ---------- prices ---------- */
+function priceOf(id){return S.prices[id]||null}
+function fillDatalist(){var dlst=$("#modelList");dlst.innerHTML=Object.keys(S.prices).sort().map(function(id){return'<option value="'+esc(id)+'">'}).join("")}
+$("#refreshPrices").onclick=function(){var st=$("#priceStatus");st.textContent=t("prices_loading");
+  fetch("https://openrouter.ai/api/v1/models").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var c=0;(j.data||[]).forEach(function(m){if(!m.pricing)return;var pi=parseFloat(m.pricing.prompt),po=parseFloat(m.pricing.completion);if(isNaN(pi)||isNaN(po)||pi<0||po<0)return;S.prices[m.id]={in:+(pi*1e6).toFixed(4),out:+(po*1e6).toFixed(4),name:m.name||m.id};c++});
+    S.pricesAt=new Date().toISOString();st.textContent=c+" "+t("prices_ok");fillDatalist();
+    S.workflows.forEach(function(w){var p=priceOf(w.model);if(p){w.pin=p.in;w.pout=p.out}});renderInventory();save()})
+  .catch(function(){st.textContent=t("prices_fail")})};
+
+/* ---------- inventory ---------- */
+function wfCost(w,pin,pout){var a=+w.calls||0,i=+w.inTok||0,o=+w.outTok||0;return a*(i*(pin==null?+w.pin||0:pin)+o*(pout==null?+w.pout||0:pout))/1e6}
+function renderInventory(){
+  var tb=$("#wfBody");tb.innerHTML="";
+  S.workflows.forEach(function(w){var tr=document.createElement("tr");
+    tr.innerHTML='<td><input data-k="name" value="'+esc(w.name)+'" aria-label="'+t("c_flow")+'"></td><td><input data-k="model" list="modelList" value="'+esc(w.model)+'" aria-label="'+t("c_model")+'"></td>'+
+    ['calls','inTok','outTok','pin','pout'].map(function(k){return'<td class="num"><input data-k="'+k+'" type="number" min="0" step="any" value="'+esc(w[k])+'" style="text-align:right;width:110px"></td>'}).join("")+
+    '<td class="num" data-cost><strong>'+money(wfCost(w))+'</strong></td><td><button class="btn link" type="button" data-del>'+t("remove")+'</button></td>';
+    $$("input",tr).forEach(function(inp){inp.oninput=function(){var k=inp.dataset.k;w[k]=inp.type==="number"?inp.value:inp.value;if(k==="model"){var p=priceOf(inp.value);if(p){w.pin=p.in;w.pout=p.out;$('[data-k=pin]',tr).value=p.in;$('[data-k=pout]',tr).value=p.out}}$("[data-cost]",tr).innerHTML="<strong>"+money(wfCost(w))+"</strong>";renderInvKpis();save()}});
+    $("[data-del]",tr).onclick=function(){S.workflows=S.workflows.filter(function(x){return x!==w});renderInventory();save()};
+    tb.appendChild(tr)});
+  $("#wfEmpty").style.display=S.workflows.length?"none":"block";renderInvKpis();
+}
+function renderInvKpis(){var m=S.workflows.reduce(function(s,w){return s+wfCost(w)},0);var top=S.workflows.slice().sort(function(a,b){return wfCost(b)-wfCost(a)})[0];
+  $("#invKpis").innerHTML='<div class="kpi bad"><b>'+money(m)+'</b><span>'+t("k_month")+'</span></div><div class="kpi bad"><b>'+money(m*12)+'</b><span>'+t("k_year")+'</span></div><div class="kpi"><b>'+S.workflows.length+'</b><span>'+t("k_flows")+'</span></div><div class="kpi"><b style="font-size:18px">'+esc(top?top.name:"—")+'</b><span>'+t("k_top")+'</span></div>'}
+$("#addWf").onclick=function(){S.workflows.push({id:uid(),name:t("new_flow"),model:"",calls:10000,inTok:800,outTok:300,pin:"",pout:""});renderInventory();save();var ins=$$("#wfBody tr:last-child input");if(ins[0])ins[0].select()};
+
+/* ---------- demo ---------- */
+$("#loadDemo").onclick=function(){
+  S.client=S.client||"Demo Co.";$("#client").value=S.client;
+  S.prices["example/frontier-model"]=S.prices["example/frontier-model"]||{in:3,out:15,name:"Frontier model (example price)"};
+  S.prices["example/open-70b"]=S.prices["example/open-70b"]||{in:0.6,out:0.8,name:"Open 70B (example price)"};
+  S.prices["example/open-8b"]=S.prices["example/open-8b"]||{in:0.06,out:0.09,name:"Open 8B (example price)"};
+  S.workflows=[
+    {id:uid(),name:"Soporte / Support",model:"example/frontier-model",calls:60000,inTok:1800,outTok:350,pin:3,pout:15},
+    {id:uid(),name:"Clasificar tickets",model:"example/frontier-model",calls:120000,inTok:600,outTok:10,pin:3,pout:15},
+    {id:uid(),name:"Extraer facturas",model:"example/frontier-model",calls:15000,inTok:2500,outTok:400,pin:3,pout:15}];
+  var w=S.workflows;
+  S.cases=[
+    {id:uid(),wf:w[1].id,input:"Classify this ticket into one of [billing, bug, account, other]. Answer with the label only.\n\nTicket: I was charged twice this month for my subscription.",expected:"billing",check:"contains"},
+    {id:uid(),wf:w[1].id,input:"Classify into [billing, bug, account, other]. Label only.\n\nTicket: The export button crashes the app on Safari.",expected:"bug",check:"contains"},
+    {id:uid(),wf:w[1].id,input:"Classify into [billing, bug, account, other]. Label only.\n\nTicket: Necesito cambiar el correo de mi cuenta.",expected:"account",check:"contains"},
+    {id:uid(),wf:w[2].id,input:"Extract the invoice total as a number with two decimals, nothing else.\n\nINVOICE #8812\nSubtotal 1,200.00\nTax 18% 216.00\nTOTAL 1,416.00",expected:"^\\s*1,?416\\.00\\s*$",check:"regex"},
+    {id:uid(),wf:w[2].id,input:"Extract the invoice date in ISO format (YYYY-MM-DD), nothing else.\n\nFacture n° 22 — Date : 03/10/2026 — Montant 540,00 €",expected:"2026-10-03",check:"contains"},
+    {id:uid(),wf:w[0].id,input:"You are a support agent for a SaaS. A customer writes: 'I can't log in after resetting my password.' Reply in 3 sentences max.",expected:"Score 1 if the reply is polite, asks to clear cache or try a new reset link, offers escalation, and is 3 sentences or fewer. Score 0.5 if partially. Score 0 otherwise.",check:"judge"},
+    {id:uid(),wf:w[0].id,input:"Responde en español a un cliente que pide reembolso fuera de plazo (política: 14 días). Sé amable y ofrece una alternativa. Máximo 3 frases.",expected:"Score 1 if it answers in Spanish, cites the 14-day policy, is kind, offers an alternative (credit, discount, plan change). Score 0 if it promises a refund.",check:"judge"}];
+  renderAll();save();say("OK")};
+
+/* ---------- evals ---------- */
+function wfName(id){var w=S.workflows.find(function(x){return x.id===id});return w?w.name:"—"}
+function renderCases(){var tb=$("#caseBody");tb.innerHTML="";
+  S.cases.forEach(function(c){var tr=document.createElement("tr");
+    var opts='<option value="">—</option>'+S.workflows.map(function(w){return'<option value="'+w.id+'"'+(w.id===c.wf?" selected":"")+'>'+esc(w.name)+'</option>'}).join("");
+    var ck=["contains","exact","regex","judge"].map(function(k){return'<option value="'+k+'"'+(c.check===k?" selected":"")+'>'+t("ck_"+k)+'</option>'}).join("");
+    tr.innerHTML='<td><select data-k="wf">'+opts+'</select></td><td><textarea data-k="input" rows="3">'+esc(c.input)+'</textarea></td><td><textarea data-k="expected" rows="3">'+esc(c.expected)+'</textarea></td><td><select data-k="check">'+ck+'</select></td><td><button class="btn link" type="button" data-del>'+t("remove")+'</button></td>';
+    $$("[data-k]",tr).forEach(function(el){el.oninput=el.onchange=function(){c[el.dataset.k]=el.value;save()}});
+    $("[data-del]",tr).onclick=function(){S.cases=S.cases.filter(function(x){return x!==c});renderCases();save()};
+    tb.appendChild(tr)});
+  $("#caseEmpty").style.display=S.cases.length?"none":"block"}
+$("#addCase").onclick=function(){S.cases.push({id:uid(),wf:(S.workflows[0]||{}).id||"",input:"",expected:"",check:"contains"});renderCases();save();var ta=$$("#caseBody tr:last-child textarea")[0];if(ta)ta.focus()};
+$("#clearCases").onclick=function(){if(confirm(t("confirm_clear"))){S.cases=[];renderCases();save()}};
+$("#exportEvals").onclick=function(){dl("sua-evals.jsonl",S.cases.map(function(c){return JSON.stringify({workflow:wfName(c.wf),input:c.input,expected:c.expected,check:c.check})}).join("\n"),"application/jsonl")};
+function parseCSV(txt){var rows=[],row=[],f="",q=false;for(var i=0;i<txt.length;i++){var ch=txt[i];if(q){if(ch==='"'){if(txt[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}else{if(ch==='"')q=true;else if(ch===","||ch===";"){row.push(f);f=""}else if(ch==="\n"){row.push(f);rows.push(row);row=[];f=""}else if(ch!=="\r")f+=ch}}if(f||row.length){row.push(f);rows.push(row)}return rows}
+$("#importFile").onchange=function(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(){try{var txt=r.result,items=[];
+  if(/\.(jsonl|json|txt)$/i.test(file.name)&&txt.trim().charAt(0)!=="i"){var tt=txt.trim();if(tt.charAt(0)==="["){items=JSON.parse(tt)}else{items=tt.split(/\n+/).filter(Boolean).map(function(l){return JSON.parse(l)})}}
+  else{var rows=parseCSV(txt);var h=rows.shift().map(function(x){return x.trim().toLowerCase()});items=rows.filter(function(r){return r.join("").trim()}).map(function(r){var o={};h.forEach(function(k,i){o[k]=r[i]});return o})}
+  var n=0;items.forEach(function(o){var input=o.input||o.prompt||o.question;if(!input)return;var wfn=o.workflow||o.flow||"";var w=S.workflows.find(function(x){return x.name===wfn});if(!w&&wfn){w={id:uid(),name:wfn,model:"",calls:0,inTok:0,outTok:0,pin:"",pout:""};S.workflows.push(w)}
+    S.cases.push({id:uid(),wf:w?w.id:"",input:String(input),expected:String(o.expected||o.answer||o.rubric||""),check:["contains","exact","regex","judge"].indexOf(o.check)>-1?o.check:"contains"});n++});
+  if(!n)throw 0;renderAll();save();say(n+" "+t("imported"))}catch(err){say(t("import_fail"))}e.target.value=""};r.readAsText(file)};
+
+/* ---------- benchmark ---------- */
+var running=false,abort=false;
+function renderBenchSetup(){var box=$("#modelPick");var cur=S.workflows.map(function(w){return w.model}).filter(Boolean);
+  if(!S.bench.models.length){S.bench.models=[cur[0]||"","","",""]}while(S.bench.models.length<4)S.bench.models.push("");
+  box.innerHTML='<div class="f" style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px">'+t("models_to_test")+'</div>'+S.bench.models.map(function(m,i){return'<input data-i="'+i+'" list="modelList" value="'+esc(m)+'" placeholder="'+(i===0?"provider/current-model":"provider/open-model")+'" style="width:100%;margin-bottom:6px">'}).join("");
+  $$("input",box).forEach(function(inp){inp.oninput=function(){S.bench.models[+inp.dataset.i]=inp.value.trim();save()}});
+  $("#judgeModel").value=S.settings.judge||"";$("#judgeModel").oninput=function(e){S.settings.judge=e.target.value.trim();save()};
+  $("#keyState").textContent=S.settings.key?t("key_ok")+S.settings.baseUrl:t("key_missing");
+  renderBenchResults()}
+function grade(c,out){var o=(out||"").trim();if(c.check==="exact")return o.toLowerCase()===String(c.expected).trim().toLowerCase()?1:0;
+  if(c.check==="regex"){try{return new RegExp(c.expected,"im").test(o)?1:0}catch(e){return 0}}
+  return o.toLowerCase().indexOf(String(c.expected).trim().toLowerCase())>-1?1:0}
+function chat(model,messages,maxTok){var t0=performance.now();var h={"Content-Type":"application/json","Authorization":"Bearer "+S.settings.key};if(/openrouter/.test(S.settings.baseUrl)){h["X-Title"]="sua Auditor"}
+  return fetch(S.settings.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:h,body:JSON.stringify({model:model,messages:messages,temperature:0,max_tokens:maxTok||600})})
+  .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error((j.error&&j.error.message)||("HTTP "+r.status));return j})})
+  .then(function(j){var u=j.usage||{};return{text:(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||"",inTok:u.prompt_tokens||0,outTok:u.completion_tokens||0,ms:Math.round(performance.now()-t0)}})}
+function judge(c,out){var jm=S.settings.judge||S.bench.models[0];return chat(jm,[{role:"system",content:"You are a strict evaluator. Reply ONLY with a number between 0 and 1."},{role:"user",content:"Rubric:\n"+c.expected+"\n\nTask given to the model:\n"+c.input+"\n\nModel answer:\n"+out+"\n\nScore (0 to 1):"}],8).then(function(r){var v=parseFloat((r.text.match(/[01](?:\.\d+)?/)||["0"])[0]);return Math.max(0,Math.min(1,isNaN(v)?0:v))})}
+$("#runBench").onclick=function(){var models=S.bench.models.filter(Boolean);
+  if(!S.cases.length)return say(t("need_cases"));if(!models.length)return say(t("need_models"));if(!S.settings.key&&!/localhost|127\.0\.0\.1/.test(S.settings.baseUrl))return say(t("key_missing"));
+  running=true;abort=false;S.bench.results={};S.bench.demo=false;$("#runBench").disabled=true;$("#stopBench").disabled=false;
+  var jobs=[];S.cases.forEach(function(c){models.forEach(function(m){jobs.push([c,m])})});var done=0;
+  function next(){if(abort||!jobs.length){running=false;$("#runBench").disabled=false;$("#stopBench").disabled=true;$("#benchStatus").textContent=abort?t("stopped"):t("done_run");save();renderBenchResults();return}
+    var job=jobs.shift(),c=job[0],m=job[1];
+    chat(m,[{role:"user",content:c.input}]).then(function(r){var p=priceOf(m)||{in:0,out:0};var cost=(r.inTok*p.in+r.outTok*p.out)/1e6;
+      return(c.check==="judge"?judge(c,r.text):Promise.resolve(grade(c,r.text))).then(function(sc){return{output:r.text,score:sc,ms:r.ms,cost:cost}})})
+    .catch(function(e){return{output:"",score:0,ms:0,cost:0,err:String(e.message||e)}})
+    .then(function(res){S.bench.results[c.id]=S.bench.results[c.id]||{};S.bench.results[c.id][m]=res;done++;$("#benchBar").style.width=(done/(done+jobs.length)*100)+"%";$("#benchStatus").textContent=t("running")+" "+done+"/"+(done+jobs.length);renderBenchResults();next()})}
+  // 2 en paralelo para no saturar límites gratuitos
+  next();setTimeout(next,400)};
+$("#stopBench").onclick=function(){abort=true};
+$("#demoBench").onclick=function(){if(!S.cases.length){$("#loadDemo").click()}var models=S.bench.models.filter(Boolean);
+  if(models.length<2){var cur=(S.workflows[0]||{}).model||"example/frontier-model";S.bench.models=[cur,"example/open-70b","example/open-8b",""];models=S.bench.models.filter(Boolean);renderBenchSetup()}
+  var seed=7;function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+  S.bench.results={};S.bench.demo=true;
+  S.cases.forEach(function(c){S.bench.results[c.id]={};models.forEach(function(m,i){var p=priceOf(m)||{in:i?0.3:3,out:i?0.4:15};var it=200+Math.round(rnd()*600),ot=20+Math.round(rnd()*200);
+    var base=i===0?0.92:i===1?0.86:0.68;var sc=c.check==="judge"?Math.round(Math.min(1,base+rnd()*0.15-0.07)*10)/10:(rnd()<base?1:0);
+    S.bench.results[c.id][m]={output:"[demo] "+(sc>=0.5?String(c.expected).slice(0,60):"…"),score:sc,ms:Math.round((i===0?1400:i===1?900:400)+rnd()*500),cost:(it*p.in+ot*p.out)/1e6}})});
+  $("#benchBar").style.width="100%";$("#benchStatus").textContent=t("demo_flag");save();renderBenchResults()};
+function modelStats(m,wfId){var n=0,s=0,ms=0,cost=0;S.cases.forEach(function(c){if(wfId&&c.wf!==wfId)return;var r=S.bench.results[c.id]&&S.bench.results[c.id][m];if(!r)return;n++;s+=r.score>=0.5?1:0;ms+=r.ms;cost+=r.cost});return n?{n:n,pass:s/n,ms:ms/n,cost:cost/n}:null}
+function renderBenchResults(){var models=S.bench.models.filter(Boolean);var has=Object.keys(S.bench.results).length;
+  var sum=$("#benchSummary");if(!has){sum.innerHTML="";$("#benchTable").innerHTML='<tbody><tr><td class="note">'+t("no_results")+'</td></tr></tbody>';return}
+  sum.innerHTML=(S.bench.demo?'<p><span class="demo-flag">'+t("demo_flag")+'</span></p>':"")+'<div class="kpis">'+models.map(function(m){var st=modelStats(m);if(!st)return"";return'<div class="kpi"><span style="display:block;font-weight:600;color:var(--fg);word-break:break-all;margin-bottom:6px">'+esc(m)+'</span><b>'+Math.round(st.pass*100)+'%</b><span>'+t("pass_rate")+' · '+(st.ms/1000).toFixed(1)+' s · '+micro(st.cost)+' / '+t("cost_case").toLowerCase()+'</span></div>'}).join("")+'</div>';
+  var h='<thead><tr><th>'+t("c_input")+'</th>'+models.map(function(m){return'<th>'+esc(m)+'</th>'}).join("")+'</tr></thead><tbody>';
+  S.cases.forEach(function(c){var row=S.bench.results[c.id]||{};h+='<tr><td style="max-width:280px"><pre class="out">'+esc(c.input)+'</pre><span class="pill">'+t("ck_"+c.check)+'</span></td>'+models.map(function(m){var r=row[m];if(!r)return"<td>—</td>";return'<td><div class="'+(r.score>=0.5?"pass":"fail")+'" style="font-weight:700">'+(r.score>=0.5?"✓":"✗")+' '+r.score+'</div><pre class="out">'+esc(r.err||r.output)+'</pre></td>'}).join("")+'</tr>'});
+  $("#benchTable").innerHTML=h+'</tbody>'}
+
+/* ---------- report ---------- */
+function renderReportHead(){$("#repSub").textContent=t("sub_report")+(S.client||"—")+" · "+new Date().toLocaleDateString(S.lang)}
+function renderReport(){renderReportHead();$("#repDemo").innerHTML=S.bench.demo?'<span class="demo-flag">'+t("demo_flag")+'</span>':"";
+  var models=S.bench.models.filter(Boolean);var rows=[],totNow=0,totThen=0;
+  S.workflows.forEach(function(w){var now=wfCost(w);totNow+=now;
+    var cands=models.filter(function(m){return m!==w.model});
+    if(!w.target||models.indexOf(w.target)<0){var best=null;cands.forEach(function(m){var st=modelStats(m,w.id);var p=priceOf(m);if(!st||!p)return;var c=wfCost(w,p.in,p.out);var sc=st.pass*1000-c/Math.max(now,1);if(!best||sc>best.sc)best={m:m,sc:sc}});w.target=best?best.m:(cands[0]||"")}
+    var p=priceOf(w.target);var then=p?wfCost(w,p.in,p.out):now;var stT=w.target?modelStats(w.target,w.id):null;var stC=w.model?modelStats(w.model,w.id):null;
+    var reco;if(!stT)reco="reco_measure";else if(stC&&stT.pass>=stC.pass-0.02&&then<now)reco="reco_migrate";else if(stT&&then<now*0.5)reco="reco_finetune";else reco="reco_keep";
+    var effThen=reco==="reco_migrate"?then:now;totThen+=effThen;rows.push({w:w,now:now,then:then,st:stT,reco:reco,save:(now-then)*12})});
+  var saveY=(totNow-totThen)*12,pct=totNow?(1-totThen/totNow)*100:0;var nCases=Object.keys(S.bench.results).length;
+  var best=null;models.forEach(function(m){var st=modelStats(m);if(st&&(!best||st.pass>best.pass))best={m:m,pass:st.pass}});
+  $("#repKpis").innerHTML='<div class="kpi good"><b>'+money(saveY)+'</b><span>'+t("r_save_year")+'</span></div><div class="kpi good"><b>'+Math.round(pct)+'%</b><span>'+t("r_save_pct")+'</span></div><div class="kpi"><b>'+nCases+'</b><span>'+t("r_cases")+'</span></div><div class="kpi"><b style="font-size:16px;word-break:break-all">'+esc(best?best.m+" · "+Math.round(best.pass*100)+"%":"—")+'</b><span>'+t("r_best")+'</span></div>';
+  var tb=$("#repBody");tb.innerHTML="";
+  rows.forEach(function(r){var tr=document.createElement("tr");var opts=models.map(function(m){return'<option'+(m===r.w.target?" selected":"")+'>'+esc(m)+'</option>'}).join("");
+    tr.innerHTML='<td><strong>'+esc(r.w.name)+'</strong><div class="note">'+esc(r.w.model)+'</div></td><td class="num">'+money(r.now)+'</td><td><select class="noprint-sel">'+opts+'</select></td><td class="num">'+(r.st?Math.round(r.st.pass*100)+"%":'<span class="note">'+t("not_measured")+'</span>')+'</td><td class="num">'+money(r.then)+'</td><td class="num '+(r.save>0?"pass":"fail")+'">'+money(r.save)+'</td><td>'+t(r.reco)+'</td>';
+    $("select",tr).onchange=function(e){r.w.target=e.target.value;save();renderReport()};tb.appendChild(tr)});
+  var max=Math.max.apply(null,rows.map(function(r){return Math.max(r.now,r.then)}).concat([1]));var bw=Math.min(90,(700/Math.max(rows.length,1))/2.6);var svg='';
+  rows.forEach(function(r,i){var x=60+i*(700/Math.max(rows.length,1));var h1=r.now/max*180,h2=r.then/max*180;
+    svg+='<rect x="'+x+'" y="'+(210-h1)+'" width="'+bw+'" height="'+h1+'" fill="#E5484D"/><rect x="'+(x+bw+6)+'" y="'+(210-h2)+'" width="'+bw+'" height="'+h2+'" fill="#1F9D5C"/><text x="'+x+'" y="232" font-size="12" fill="currentColor" font-family="Archivo,Arial">'+esc(r.w.name.slice(0,22))+'</text><text x="'+x+'" y="'+(204-h1)+'" font-size="11" fill="currentColor" font-family="Archivo,Arial">'+money(r.now)+'</text><text x="'+(x+bw+6)+'" y="'+(204-h2)+'" font-size="11" fill="currentColor" font-family="Archivo,Arial">'+money(r.then)+'</text>'});
+  svg+='<line x1="50" x2="790" y1="210" y2="210" stroke="currentColor" stroke-opacity=".3"/><rect x="560" y="8" width="12" height="12" fill="#E5484D"/><text x="578" y="18" font-size="12" fill="currentColor" font-family="Archivo,Arial">'+t("chart_now")+'</text><rect x="650" y="8" width="12" height="12" fill="#1F9D5C"/><text x="668" y="18" font-size="12" fill="currentColor" font-family="Archivo,Arial">'+t("chart_then")+'</text>';
+  var ch=$("#repChart");ch.innerHTML=svg;ch.setAttribute("aria-label",t("chart_now")+" vs "+t("chart_then"));
+  $("#repNext").innerHTML=["next1","next2","next3","next4"].map(function(k){return"<li>"+t(k)+"</li>"}).join("");save()}
+$("#printRep").onclick=function(){go("report");setTimeout(function(){window.print()},150)};
+function exportProject(){var copy=JSON.parse(JSON.stringify(S));copy.settings.key="";dl("sua-proyecto-"+(S.client||"cliente").replace(/\W+/g,"-")+".json",JSON.stringify(copy,null,2))}
+$("#exportProject").onclick=exportProject;$("#exportProject2").onclick=exportProject;
+$("#importProject").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);var key=S.settings.key;S=Object.assign(fresh(),o);S.settings.key=key;$("#client").value=S.client;applyLang();go(S.view||"inventory");save();say("OK")}catch(err){say(t("import_fail"))}};r.readAsText(f);e.target.value=""};
+$("#resetAll").onclick=function(){if(confirm(t("confirm_reset"))){var l=S.lang,k=S.settings;S=fresh();S.lang=l;S.settings=k;$("#client").value="";save();applyLang();go("inventory")}};
+
+/* ---------- settings ---------- */
+$("#baseUrl").value=S.settings.baseUrl;$("#apiKey").value=S.settings.key;
+$("#baseUrl").oninput=function(e){S.settings.baseUrl=e.target.value.trim()||"https://openrouter.ai/api/v1";save()};
+$("#apiKey").oninput=function(e){S.settings.key=e.target.value.trim();save()};
+
+function renderAll(){fillDatalist();renderInventory();renderCases();if(S.view==="bench")renderBenchSetup();if(S.view==="report")renderReport();}
+applyLang();go(S.view||"inventory");
+})();
+</script>
+</body>
+</html>
